@@ -31,10 +31,7 @@ struct TareApp: App {
             }
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active, model.onboarded else { return }
-                Task {
-                    await model.syncHealth(days: 7)
-                    model.runCoachIfDue()
-                }
+                Task { await model.refreshOnForeground() }
             }
         }
     }

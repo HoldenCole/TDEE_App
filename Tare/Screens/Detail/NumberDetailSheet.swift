@@ -172,6 +172,10 @@ struct NumberDetailSheet: View {
         model.chartMarkers(from: range.start()).map(ChartMarker.init(change:))
     }
 
+    private var phases: [PhaseSpan] {
+        model.phaseSpans(from: range.start(), to: Date())
+    }
+
     private func logSeries(_ keyPath: KeyPath<DayInput, Double?>) -> [DatedValue] {
         let start = range.start()
         return model.log.filter { $0.date >= start }.compactMap { day in day[keyPath: keyPath].map { DatedValue(date: day.date, value: $0) } }
@@ -183,7 +187,7 @@ struct NumberDetailSheet: View {
     private var chart: some View {
         switch number {
         case .target, .remaining:
-            LineSeriesChart(series: history.map { DatedValue(date: $0.date, value: $0.target) }, bars: history.compactMap { p in p.eaten.map { DatedValue(date: p.date, value: $0) } }, markers: markers)
+            LineSeriesChart(series: history.map { DatedValue(date: $0.date, value: $0.target) }, bars: history.compactMap { p in p.eaten.map { DatedValue(date: p.date, value: $0) } }, markers: markers, phases: phases)
             Text("Target over time, with what you ate as bars.").captionStyle(Theme.tertiary).padding(.top, 8)
         case .protein:
             macroChart(eaten: logSeries(\.proteinG), target: s.today.proteinG)
@@ -194,20 +198,20 @@ struct NumberDetailSheet: View {
         case .water:
             macroChart(eaten: logSeries(\.waterOz), target: s.today.waterOz)
         case .weight, .trendWeight:
-            WeightChart(points: s.trend.filter { $0.date >= range.start() }, markers: markers)
+            WeightChart(points: s.trend.filter { $0.date >= range.start() }, markers: markers, phases: phases)
             Text("Dots are daily weigh-ins. The line ignores water and sodium swings.").captionStyle(Theme.tertiary).padding(.top, 8)
         case .steps:
             let steps = model.log.filter { $0.date >= range.start() }.compactMap { day in day.steps.map { DatedValue(date: day.date, value: Double($0)) } }
             LineSeriesChart(series: [], dashed: steps.map { DatedValue(date: $0.date, value: s.activity.stepsPerDay) }, bars: steps)
             Text("Daily steps, with your \(d.trustWindowDays)-day average dashed.").captionStyle(Theme.tertiary).padding(.top, 8)
         case .maintenance:
-            LineSeriesChart(series: history.compactMap { p in p.observedTDEE.map { DatedValue(date: p.date, value: $0) } }, secondary: history.map { DatedValue(date: $0.date, value: $0.maintenance) }, dashed: history.map { DatedValue(date: $0.date, value: $0.formulaTDEE) }, markers: markers)
+            LineSeriesChart(series: history.compactMap { p in p.observedTDEE.map { DatedValue(date: p.date, value: $0) } }, secondary: history.map { DatedValue(date: $0.date, value: $0.maintenance) }, dashed: history.map { DatedValue(date: $0.date, value: $0.formulaTDEE) }, markers: markers, phases: phases)
             Text("Observed TDEE in accent, the blended value as the faint line, formula TDEE dashed.").captionStyle(Theme.tertiary).padding(.top, 8)
         case .actualRate:
             LineSeriesChart(series: history.compactMap { p in p.actualRateLbPerWeek.map { DatedValue(date: p.date, value: $0) } }, dashed: history.map { DatedValue(date: $0.date, value: $0.goalRateLbPerWeek) }, yDigits: 2)
             Text("Weekly rate from the trend-weight fit, against the goal rate dashed.").captionStyle(Theme.tertiary).padding(.top, 8)
         case .goalRate:
-            LineSeriesChart(series: history.map { DatedValue(date: $0.date, value: $0.goalRateLbPerWeek) }, markers: markers, yDigits: 2)
+            LineSeriesChart(series: history.map { DatedValue(date: $0.date, value: $0.goalRateLbPerWeek) }, markers: markers, phases: phases, yDigits: 2)
         case .observedTDEE:
             LineSeriesChart(series: history.compactMap { p in p.observedTDEE.map { DatedValue(date: p.date, value: $0) } })
         case .formulaTDEE:

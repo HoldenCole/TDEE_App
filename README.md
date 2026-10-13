@@ -68,6 +68,8 @@ They run on macOS and Linux.
 - "Trust" is `min(1, days with calories ÷ N) × max trust`. Maintenance is `trust × observed + (1 − trust) × formula`.
 - Calorie cycling keeps the weekly total: the gap between training and rest days is `(training-day TDEE − rest-day TDEE) × shift`, spread by your lift days per week.
 - The `+38 kcal` badge on a dial is today's target now versus with that dial at its default.
+- Nothing resets when you switch phase or accept a recommendation. Every change is logged: dial changes and accepted recommendations appear as a dashed marker on the charts, and a phase switch draws a solid line with the chart shaded by phase (orange for a cut, blue for a bulk, green for maintenance or recomp). Switching phase leaves the rate alone; if the rate points the wrong way for the new phase, a toast offers the phase's usual rate.
+- Health background delivery re-syncs the last three days whenever a weigh-in, meal, step sample or workout lands, including while the app is open. Coming to the foreground re-syncs Health, pulls Hevy if a key is set, and runs the coach if it is check-in day. Pull down on Today to do the same by hand.
 
 ## Layout of the app code
 

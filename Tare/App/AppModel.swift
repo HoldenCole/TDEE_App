@@ -38,6 +38,7 @@ final class AppModel {
     // Services
     let health = HealthSync()
     private(set) var isSyncingHealth = false
+    private var healthResyncRequested = false
     private(set) var lastError: String?
 
     init(container: ModelContainer) {
@@ -101,11 +102,13 @@ final class AppModel {
         updated.set(value, for: key)
         let new = updated.value(for: key)
         guard new != old else { return nil }
+        var phaseWarning: Phase?
         if key == .phase, let phase = value.choiceValue.flatMap(Phase.init(rawValue:)) {
+            // Nothing else changes: the rate and every other dial carry over, and the
+            // switch is logged so the charts can mark it and shade each phase.
             updated.phaseStartDate = Calendar.current.startOfDay(for: Date())
-            if source == .user {
-                updated.ratePercentPerWeek = phase.defaultRatePercent
-            }
+            let rate = GoalRate.compute(dials: updated, weightLb: snapshot.body.weightUsedLb, today: Date(), calendar: .current).lbPerWeek
+            if (phase.isDeficit && rate > 0) || (phase.isSurplus && rate < 0) { phaseWarning = phase }
         }
         dials = updated
         AppState.saveDials(dials)
@@ -118,6 +121,12 @@ final class AppModel {
         }
         AppState.activePresetName = nil
         recompute()
+        if let phase = phaseWarning, source == .user {
+            let suggested = phase.defaultRatePercent
+            showToast("Rate is \(dials.ratePercentPerWeek > 0 ? "a surplus" : "a deficit") during a \(phase.title.lowercased())", actionTitle: "Use \(Fmt.signed(suggested, 2))%") { [weak self] in
+                self?.setDial(.ratePercentPerWeek, .number(suggested))
+            }
+        }
         return change
     }
 
@@ -206,10 +215,38 @@ final class AppModel {
         return (try? context.fetch(d)) ?? []
     }
 
-    /// Changes the Trend chart marks: user and coach changes to dials that move the target.
+    /// Changes the charts mark with a dashed rule: user and coach changes to dials that move
+    /// the target. Phase switches are drawn separately, as shaded spans.
     func chartMarkers(from start: Date) -> [DialChange] {
-        dialChanges().filter { $0.date >= start && $0.source != .undo }
+        dialChanges().filter { $0.date >= start && $0.source != .undo && $0.dialKey != .phase }
             .filter { DialCatalog.spec(for: $0.dialKey, in: dials)?.affectsTarget ?? true }
+    }
+
+    /// Every phase switch, oldest first.
+    func phaseChanges() -> [DialChange] {
+        dialChanges().filter { $0.dialKey == .phase && $0.source != .undo }.sorted { $0.date < $1.date }
+    }
+
+    /// The phase in effect across a date range, split at each switch, so charts can shade
+    /// each cut and bulk and draw a line where one became the other.
+    func phaseSpans(from start: Date, to end: Date) -> [PhaseSpan] {
+        let changes = phaseChanges()
+        var current: Phase = changes.first?.oldValue?.choiceValue.flatMap(Phase.init(rawValue:)) ?? dials.phase
+        var spans: [PhaseSpan] = []
+        var spanStart = start
+        for c in changes {
+            guard let to = c.newValue?.choiceValue.flatMap(Phase.init(rawValue:)) else { continue }
+            if c.date <= start {
+                current = to
+                continue
+            }
+            if c.date > end { break }
+            spans.append(PhaseSpan(phase: current, start: spanStart, end: c.date, startsWithSwitch: spanStart != start))
+            current = to
+            spanStart = c.date
+        }
+        spans.append(PhaseSpan(phase: current, start: spanStart, end: end, startsWithSwitch: spanStart != start))
+        return spans
     }
 
     // MARK: Day records
@@ -310,10 +347,15 @@ final class AppModel {
 
     // MARK: Health
 
+    /// Pulls the last `days` days from Health. A delivery that lands mid-sync queues one more
+    /// pass, so a workout or meal that arrives while we're reading is never missed.
     func syncHealth(days: Int = 60) async {
-        guard HealthSync.isAvailable, !isSyncingHealth else { return }
+        guard HealthSync.isAvailable, AppState.healthAuthorized else { return }
+        if isSyncingHealth {
+            healthResyncRequested = true
+            return
+        }
         isSyncingHealth = true
-        defer { isSyncingHealth = false }
         do {
             let end = Date()
             let start = Calendar.current.date(byAdding: .day, value: -days, to: end) ?? end
@@ -324,6 +366,21 @@ final class AppModel {
         } catch {
             lastError = error.localizedDescription
         }
+        isSyncingHealth = false
+        if healthResyncRequested {
+            healthResyncRequested = false
+            await syncHealth(days: 3)
+        }
+    }
+
+    /// Called when the app comes to the foreground: Health, then Hevy if a key is set and
+    /// the last pull is older than 15 minutes, then the coach.
+    func refreshOnForeground() async {
+        await syncHealth(days: 7)
+        if HevyConnector.hasKey, (AppState.hevyLastSync.map { Date().timeIntervalSince($0) > 15 * 60 } ?? true) {
+            _ = try? await HevyConnector.sync(model: self, fullHistory: false)
+        }
+        runCoachIfDue()
     }
 
     func startHealthBackgroundDelivery() {

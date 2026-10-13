@@ -28,6 +28,44 @@ struct DatedValue: Identifiable, Equatable {
     var id: Date { date }
 }
 
+/// One stretch of a phase, for shading charts and drawing a line where the phase changed.
+struct PhaseSpan: Identifiable, Equatable {
+    let phase: Phase
+    let start: Date
+    let end: Date
+    /// True when the span begins with a switch inside the chart range (draw the line).
+    let startsWithSwitch: Bool
+    var id: Date { start }
+
+    var color: Color {
+        switch phase {
+        case .cut: return Theme.behindBar
+        case .leanBulk, .bulk: return Theme.accent
+        case .recomp, .maintain: return Theme.good
+        }
+    }
+}
+
+/// Shading and switch lines shared by every time chart.
+struct PhaseLayer: ChartContent {
+    let spans: [PhaseSpan]
+
+    var body: some ChartContent {
+        ForEach(spans) { span in
+            RectangleMark(xStart: .value("Start", span.start), xEnd: .value("End", span.end))
+                .foregroundStyle(span.color.opacity(0.06))
+            if span.startsWithSwitch {
+                RuleMark(x: .value("Phase", span.start))
+                    .foregroundStyle(span.color)
+                    .lineStyle(StrokeStyle(lineWidth: 2))
+                    .annotation(position: .bottom, alignment: .leading, spacing: 2) {
+                        Text(span.phase.title).font(.system(size: 11, weight: .semibold)).foregroundStyle(span.color)
+                    }
+            }
+        }
+    }
+}
+
 /// A marker for a dial change or accepted recommendation on a time chart.
 struct ChartMarker: Identifiable, Equatable {
     let id: UUID
@@ -48,6 +86,7 @@ extension ChartMarker {
 struct WeightChart: View {
     let points: [TrendPoint]
     var markers: [ChartMarker] = []
+    var phases: [PhaseSpan] = []
     var goalPath: [DatedValue] = []
     var showDots = true
     var height: CGFloat = 220
@@ -61,6 +100,7 @@ struct WeightChart: View {
 
     var body: some View {
         Chart {
+            PhaseLayer(spans: phases)
             if !points.isEmpty {
                 ForEach(points) { p in
                     AreaMark(x: .value("Date", p.date), yStart: .value("Base", domain.lowerBound), yEnd: .value("Trend", p.trendLb))
@@ -116,6 +156,7 @@ struct LineSeriesChart: View {
     var dashed: [DatedValue] = []
     var bars: [DatedValue] = []
     var markers: [ChartMarker] = []
+    var phases: [PhaseSpan] = []
     var unit: String = ""
     var height: CGFloat = 220
     var yDigits: Int = 0
@@ -130,6 +171,7 @@ struct LineSeriesChart: View {
 
     var body: some View {
         Chart {
+            PhaseLayer(spans: phases)
             ForEach(bars) { b in
                 BarMark(x: .value("Date", b.date, unit: .day), y: .value("Value", b.value))
                     .foregroundStyle(Theme.track)

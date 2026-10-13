@@ -142,7 +142,7 @@ struct OnboardingView: View {
         if let bf = Double(bodyFat), bf > 0 {
             model.setDial(.bodyFatPercentManual, .optionalNumber(bf), source: .onboarding, log: false)
         }
-        model.setDial(.phase, .choice(phase.rawValue), source: .onboarding, log: false)
+        model.setDial(.phase, .choice(phase.rawValue), source: .onboarding)
         model.setDial(.ratePercentPerWeek, .number(phase.defaultRatePercent), source: .onboarding, log: false)
         model.completeOnboarding()
         model.startHealthBackgroundDelivery()

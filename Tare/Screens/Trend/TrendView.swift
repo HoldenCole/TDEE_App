@@ -54,8 +54,9 @@ struct TrendView: View {
                     .padding(.bottom, 16)
 
                 if points.count >= 2 {
-                    WeightChart(points: points, markers: model.chartMarkers(from: range.start()).map(ChartMarker.init(change:)))
-                    Text("Dots are daily weigh-ins. The line ignores water and sodium swings.")
+                    let phases = model.phaseSpans(from: max(range.start(), points.first?.date ?? range.start()), to: Date())
+                    WeightChart(points: points, markers: model.chartMarkers(from: range.start()).map(ChartMarker.init(change:)), phases: phases)
+                    Text(phases.count > 1 ? "Dots are daily weigh-ins. The line ignores water and sodium swings. Shading shows each phase; a solid line is where you switched." : "Dots are daily weigh-ins. The line ignores water and sodium swings.")
                         .font(Theme.body()).foregroundStyle(Theme.tertiary)
                         .padding(.top, 10)
                         .padding(.bottom, 22)

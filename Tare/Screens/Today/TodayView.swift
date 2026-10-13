@@ -56,6 +56,7 @@ struct TodayView: View {
                 }
                 .padding(.top, 20)
             }
+            .refreshable { await model.refreshOnForeground() }
             .navigationDestination(isPresented: $model.showCoachScreen) {
                 if let rec = model.openRecommendation, let id = model.openRecommendationRecordID {
                     CoachView(recommendation: rec, recordID: id)
