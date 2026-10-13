@@ -62,7 +62,7 @@ struct PhaseLayer: ChartContent {
                 RuleMark(x: .value("Phase", span.start))
                     .foregroundStyle(span.color)
                     .lineStyle(StrokeStyle(lineWidth: 2))
-                    .annotation(position: .bottom, alignment: .leading, spacing: 2) {
+                    .annotation(position: .bottom, alignment: .leading, spacing: 2, overflowResolution: .init(x: .fit, y: .disabled)) {
                         Text(span.title).font(.system(size: 11, weight: .semibold)).foregroundStyle(span.color)
                     }
             }
@@ -82,7 +82,12 @@ extension ChartMarker {
         self.id = change.id
         self.date = change.date
         let title = change.title
-        self.label = "\(title) \(change.oldDescription) → \(change.newDescription)"
+        if case .date = change.newValue {
+            // A date dial's old value is noise on a chart; "Diet break starts · Oct 13" is enough.
+            self.label = "\(title) · \(change.newDescription)"
+        } else {
+            self.label = "\(title) \(change.oldDescription) → \(change.newDescription)"
+        }
     }
 }
 
@@ -131,7 +136,7 @@ struct WeightChart: View {
                     RuleMark(x: .value("Change", m.date))
                         .foregroundStyle(Theme.behindBar)
                         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                        .annotation(position: .top, alignment: .leading, spacing: 2) {
+                        .annotation(position: .top, alignment: .leading, spacing: 2, overflowResolution: .init(x: .fit, y: .disabled)) {
                             Text(m.label).font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.behind).lineLimit(1)
                         }
                 }
@@ -140,7 +145,7 @@ struct WeightChart: View {
                         .symbol {
                             Circle().strokeBorder(Theme.accent, lineWidth: 2.5).background(Circle().fill(Theme.surface)).frame(width: 14, height: 14)
                         }
-                        .annotation(position: .trailing, spacing: 4) {
+                        .annotation(position: .trailing, spacing: 4, overflowResolution: .init(x: .fit, y: .fit)) {
                             Text(Fmt.lb(last.trendLb)).font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.tertiary)
                         }
                 }
@@ -204,7 +209,7 @@ struct LineSeriesChart: View {
                 RuleMark(x: .value("Change", m.date))
                     .foregroundStyle(Theme.behindBar)
                     .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                    .annotation(position: .top, alignment: .leading, spacing: 2) {
+                    .annotation(position: .top, alignment: .leading, spacing: 2, overflowResolution: .init(x: .fit, y: .disabled)) {
                         Text(m.label).font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.behind).lineLimit(1)
                     }
             }
@@ -213,7 +218,7 @@ struct LineSeriesChart: View {
                     .symbol {
                         Circle().strokeBorder(Theme.accent, lineWidth: 2.5).background(Circle().fill(Theme.surface)).frame(width: 14, height: 14)
                     }
-                    .annotation(position: .trailing, spacing: 4) {
+                    .annotation(position: .trailing, spacing: 4, overflowResolution: .init(x: .fit, y: .fit)) {
                         Text(yDigits == 0 ? Fmt.int(last.value) : Fmt.dec(last.value, yDigits)).font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.tertiary)
                     }
             }

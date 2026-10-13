@@ -20,6 +20,7 @@ Everything runs on the phone. There is no server and no account.
 Two GitHub Actions workflows live in `.github/workflows/`. The repo is public, so GitHub's macOS runners are free.
 
 - **Build** runs on every push: package tests, then an unsigned compile of the app. This is how compile errors get found and fixed without a Mac.
+- **UI smoke** runs on every push too: it launches the app in the iPhone 16 simulator with demo data, walks every screen in light and dark mode, and publishes screenshots to the `ci-screenshots-light` and `ci-screenshots-dark` branches. Open those branches on GitHub to see the app without installing it.
 - **TestFlight** runs on demand and needs the setup below. It mints a signing certificate and provisioning profiles with your App Store Connect API key, archives, uploads to TestFlight, then revokes what it created so nothing piles up in your account.
 
 ### TestFlight without a Mac: one-time setup (about 15 minutes in a browser)

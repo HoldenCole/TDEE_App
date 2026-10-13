@@ -108,6 +108,7 @@ struct TrendView: View {
     }
 
     private var rateStatus: (text: String, color: Color) {
+        if s.targets.goalRate.isDietBreak { return ("diet break · holding", Theme.good) }
         guard let actual = s.actualRatePercentPerWeek else { return ("need more weigh-ins", Theme.secondary) }
         let goal = s.targets.goalRate
         let diff = actual - goal.percentPerWeek

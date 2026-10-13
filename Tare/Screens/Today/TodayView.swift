@@ -89,7 +89,7 @@ struct TodayView: View {
     }
 
     private var macros: some View {
-        HStack(alignment: .top, spacing: 20) {
+        HStack(alignment: .top, spacing: 14) {
             MacroColumn(name: "Protein", eaten: s.todayLog?.proteinG ?? 0, target: s.today.proteinG, number: .protein)
             MacroColumn(name: "Carbs", eaten: s.todayLog?.carbsG ?? 0, target: s.today.carbsG, number: .carbs)
             MacroColumn(name: "Fat", eaten: s.todayLog?.fatG ?? 0, target: s.today.fatG, number: .fat)
@@ -122,10 +122,10 @@ struct MacroColumn: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text(name).font(Theme.body(.semibold)).foregroundStyle(Theme.ink).lineLimit(1).fixedSize()
+                Text(name).font(Theme.bodySmall(.semibold)).foregroundStyle(Theme.ink).lineLimit(1).minimumScaleFactor(0.8)
                 Spacer(minLength: 2)
                 DottedNumber(text: "\(Fmt.int(eaten)) / \(Fmt.int(target))", number: number, font: Theme.captionSmall(), color: Theme.secondary)
-                    .minimumScaleFactor(0.8)
+                    .layoutPriority(1)
             }
             BarView(fraction: target > 0 ? eaten / target : 0, height: 4)
         }

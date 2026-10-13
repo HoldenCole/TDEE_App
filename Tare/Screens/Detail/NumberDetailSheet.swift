@@ -271,7 +271,7 @@ struct NumberDetailSheet: View {
                     RuleMark(x: .value("Current", current))
                         .foregroundStyle(Theme.behindBar)
                         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                        .annotation(position: .top, alignment: .leading) {
+                        .annotation(position: .top, alignment: .leading, overflowResolution: .init(x: .fit, y: .disabled)) {
                             Text("now").font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.behind)
                         }
                 }
