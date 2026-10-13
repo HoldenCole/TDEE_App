@@ -1,0 +1,99 @@
+# XcodeGen project definition. Run `xcodegen generate` on a Mac to produce Tare.xcodeproj.
+# See README.md for the manual Xcode alternative.
+name: Tare
+options:
+  bundleIdPrefix: com.holdencole
+  deploymentTarget:
+    iOS: "18.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    SWIFT_STRICT_CONCURRENCY: minimal
+    CODE_SIGN_STYLE: Automatic
+    # Set your Team ID here or in Xcode under Signing & Capabilities.
+    DEVELOPMENT_TEAM: ""
+    TARGETED_DEVICE_FAMILY: "1"
+    IPHONEOS_DEPLOYMENT_TARGET: "18.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+
+packages:
+  TareEngine:
+    path: TareEngine
+  TareFiles:
+    path: TareFiles
+
+targets:
+  Tare:
+    type: application
+    platform: iOS
+    sources:
+      - path: Tare
+      - path: Shared
+    dependencies:
+      - package: TareEngine
+      - package: TareFiles
+      - target: TareWidget
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.holdencole.tare
+        PRODUCT_NAME: Tare
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    info:
+      path: Tare/Info.plist
+      properties:
+        CFBundleDisplayName: Tare
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIUserInterfaceStyle: Light
+        NSHealthShareUsageDescription: Tare reads your weight, food, steps, active energy and workouts from Health to estimate how many calories you burn. It never writes to Health.
+        NSHealthUpdateUsageDescription: Tare does not write to Health.
+        NSCameraUsageDescription: Tare uses the camera for progress photos. They stay inside Tare.
+        NSPhotoLibraryUsageDescription: Tare can import older progress photos from your library.
+        NSFaceIDUsageDescription: Tare can lock the Progress tab behind Face ID.
+    entitlements:
+      path: Tare/Tare.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.background-delivery: true
+        com.apple.developer.healthkit.access: []
+        com.apple.security.application-groups: [group.com.holdencole.tare]
+
+  TareWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TareWidget
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.holdencole.tare.widget
+        PRODUCT_NAME: TareWidget
+    info:
+      path: TareWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Tare
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: TareWidget/TareWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.holdencole.tare]
+
+schemes:
+  Tare:
+    build:
+      targets:
+        Tare: all
+        TareWidget: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - TareEngineTests

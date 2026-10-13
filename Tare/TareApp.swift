@@ -1,0 +1,41 @@
+import SwiftUI
+import SwiftData
+
+@main
+struct TareApp: App {
+    private let container: ModelContainer
+    @State private var model: AppModel
+    @Environment(\.scenePhase) private var scenePhase
+
+    init() {
+        let container = Persistence.makeContainer()
+        self.container = container
+        _model = State(initialValue: AppModel(container: container))
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            Group {
+                if model.onboarded {
+                    RootTabView()
+                } else {
+                    OnboardingView()
+                }
+            }
+            .environment(model)
+            .modelContainer(container)
+            .preferredColorScheme(.light)
+            .tint(Theme.accent)
+            .task {
+                model.startHealthBackgroundDelivery()
+            }
+            .onChange(of: scenePhase) { _, phase in
+                guard phase == .active, model.onboarded else { return }
+                Task {
+                    await model.syncHealth(days: 7)
+                    model.runCoachIfDue()
+                }
+            }
+        }
+    }
+}
