@@ -229,7 +229,7 @@ final class AppModel {
     /// Changes the charts mark with a dashed rule: user and coach changes to dials that move
     /// the target. Phase switches are drawn separately, as shaded spans.
     func chartMarkers(from start: Date) -> [DialChange] {
-        dialChanges().filter { $0.date >= start && $0.source != .undo && $0.source != .onboarding && $0.dialKey != .phase }
+        dialChanges().filter { $0.date >= start && $0.source != .undo && $0.source != .onboarding && $0.dialKey != .phase && $0.dialKey != .dietBreakStartDate }
             .filter { DialCatalog.spec(for: $0.dialKey, in: dials)?.affectsTarget ?? true }
     }
 

@@ -62,8 +62,10 @@ struct PhaseLayer: ChartContent {
                 RuleMark(x: .value("Phase", span.start))
                     .foregroundStyle(span.color)
                     .lineStyle(StrokeStyle(lineWidth: 2))
-                    .annotation(position: .bottom, alignment: .leading, spacing: 2, overflowResolution: .init(x: .fit, y: .disabled)) {
+                    .annotation(position: .overlay, alignment: .topLeading, spacing: 4, overflowResolution: .init(x: .fit, y: .fit)) {
                         Text(span.title).font(.system(size: 11, weight: .semibold)).foregroundStyle(span.color)
+                            .padding(.horizontal, 5).padding(.vertical, 2)
+                            .background(Capsule().fill(Theme.surface.opacity(0.85)))
                     }
             }
         }
@@ -75,6 +77,22 @@ struct ChartMarker: Identifiable, Equatable {
     let id: UUID
     let date: Date
     let label: String
+    /// Label row, so markers a few days apart don't print on top of each other.
+    var row: Int = 0
+
+    /// Assigns alternating rows to markers closer than `days` apart.
+    static func staggered(_ markers: [ChartMarker], days: Double = 10) -> [ChartMarker] {
+        let sorted = markers.sorted { $0.date < $1.date }
+        var out: [ChartMarker] = []
+        for m in sorted {
+            var copy = m
+            if let prev = out.last, m.date.timeIntervalSince(prev.date) < days * 86_400 {
+                copy.row = prev.row == 0 ? 1 : 0
+            }
+            out.append(copy)
+        }
+        return out
+    }
 }
 
 extension ChartMarker {
@@ -132,11 +150,11 @@ struct WeightChart: View {
                         .foregroundStyle(Theme.tertiary)
                         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
                 }
-                ForEach(markers) { m in
+                ForEach(ChartMarker.staggered(markers)) { m in
                     RuleMark(x: .value("Change", m.date))
                         .foregroundStyle(Theme.behindBar)
                         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                        .annotation(position: .top, alignment: .leading, spacing: 2, overflowResolution: .init(x: .fit, y: .disabled)) {
+                        .annotation(position: .top, alignment: .leading, spacing: 2 + CGFloat(m.row) * 15, overflowResolution: .init(x: .fit, y: .disabled)) {
                             Text(m.label).font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.behind).lineLimit(1)
                         }
                 }
@@ -154,6 +172,7 @@ struct WeightChart: View {
         .chartYScale(domain: domain)
         .chartXScale(range: .plotDimension(startPadding: 4, endPadding: 36))
         .tareChartAxes()
+        .padding(.top, 14)
         .frame(height: height)
     }
 }
@@ -205,11 +224,11 @@ struct LineSeriesChart: View {
                     .foregroundStyle(Theme.tertiary)
                     .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
             }
-            ForEach(markers) { m in
+            ForEach(ChartMarker.staggered(markers)) { m in
                 RuleMark(x: .value("Change", m.date))
                     .foregroundStyle(Theme.behindBar)
                     .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                    .annotation(position: .top, alignment: .leading, spacing: 2, overflowResolution: .init(x: .fit, y: .disabled)) {
+                    .annotation(position: .top, alignment: .leading, spacing: 2 + CGFloat(m.row) * 15, overflowResolution: .init(x: .fit, y: .disabled)) {
                         Text(m.label).font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.behind).lineLimit(1)
                     }
             }
