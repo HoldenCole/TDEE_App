@@ -272,9 +272,9 @@ public enum DialCatalog {
 
         // Profile
         out += [
-            DialSpec(key: .sex, group: .profile, title: "Sex", note: "Used by the BMR formulas.", kind: .choice(Sex.allCases.map { DialChoice($0.rawValue, $0.rawValue.capitalized) }), defaultValue: .choice(d.sex.rawValue)),
-            DialSpec(key: .birthDate, group: .profile, title: "Date of birth", note: "Age feeds Mifflin and Harris-Benedict.", kind: .date(allowsNone: true), defaultValue: .date(nil)),
-            DialSpec(key: .heightCm, group: .profile, title: "Height", unit: "cm", note: "Feeds Mifflin and Harris-Benedict.", kind: .number(min: 100, max: 250, allowsOff: true), defaultValue: .optionalNumber(nil)),
+            DialSpec(key: .sex, group: .profile, title: "Sex", note: "Used by the BMR formulas.", kind: .choice(Sex.allCases.map { DialChoice($0.rawValue, $0.rawValue.capitalized) }), defaultValue: .choice(d.sex.rawValue), affectsTarget: false),
+            DialSpec(key: .birthDate, group: .profile, title: "Date of birth", note: "Age feeds Mifflin and Harris-Benedict.", kind: .date(allowsNone: true), defaultValue: .date(nil), affectsTarget: false),
+            DialSpec(key: .heightCm, group: .profile, title: "Height", unit: "cm", note: "Feeds Mifflin and Harris-Benedict.", kind: .number(min: 100, max: 250, allowsOff: true), defaultValue: .optionalNumber(nil), affectsTarget: false),
             DialSpec(key: .phase, group: .profile, title: "Phase", note: "Cut, recomp, maintain, lean bulk or bulk. Sets the rate's usual range and which coach rules apply.", kind: .choice(Phase.allCases.map { DialChoice($0.rawValue, $0.title) }), defaultValue: .choice(d.phase.rawValue), affectsTarget: false),
             DialSpec(key: .phaseStartDate, group: .profile, title: "Phase started", note: "The goal path on the Coach chart starts here.", kind: .date(allowsNone: true), defaultValue: .date(nil), affectsTarget: false),
         ]

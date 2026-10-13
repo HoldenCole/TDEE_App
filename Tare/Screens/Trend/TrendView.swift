@@ -88,7 +88,7 @@ struct TrendView: View {
         VStack(alignment: .leading, spacing: 6) {
             Eyebrow("Trend weight")
             HStack(alignment: .firstTextBaseline, spacing: 10) {
-                DottedNumber(text: s.body.trendWeightLb.map(Fmt.lb) ?? "—", number: .trendWeight, font: Theme.large(52), tracking: -52 * 0.04)
+                DottedNumber(text: s.body.trendWeightLb.map(Fmt.lb) ?? "—", number: .trendWeight, font: Theme.large(52), tracking: -52 * 0.04, dotted: false)
                 if let change = changeSinceStart, let first = points.first {
                     Text(Fmt.signed(change, 1, suffix: " lb"))
                         .font(.system(size: 18, weight: .bold)).monospacedDigit()

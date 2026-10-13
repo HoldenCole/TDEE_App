@@ -76,7 +76,7 @@ struct TodayView: View {
     private var remaining: some View {
         VStack(spacing: 10) {
             Eyebrow("Remaining today")
-            DottedNumber(text: Fmt.int(s.remainingCalories), number: .remaining, font: Theme.hero(), tracking: -72 * 0.04)
+            DottedNumber(text: Fmt.int(s.remainingCalories), number: .remaining, font: Theme.hero(), tracking: -72 * 0.04, dotted: false)
             HStack(spacing: 4) {
                 Text("of").font(.system(size: 20)).foregroundStyle(Theme.secondary)
                 DottedNumber(text: Fmt.int(s.today.calories), number: .target, font: .system(size: 20, weight: .semibold))
@@ -121,10 +121,11 @@ struct MacroColumn: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(name).font(Theme.body(.semibold)).foregroundStyle(Theme.ink)
-                Spacer(minLength: 4)
-                DottedNumber(text: "\(Fmt.int(eaten)) / \(Fmt.int(target))", number: number, font: Theme.bodySmall(), color: Theme.secondary)
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text(name).font(Theme.body(.semibold)).foregroundStyle(Theme.ink).lineLimit(1).fixedSize()
+                Spacer(minLength: 2)
+                DottedNumber(text: "\(Fmt.int(eaten)) / \(Fmt.int(target))", number: number, font: Theme.captionSmall(), color: Theme.secondary)
+                    .minimumScaleFactor(0.8)
             }
             BarView(fraction: target > 0 ? eaten / target : 0, height: 4)
         }

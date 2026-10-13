@@ -68,12 +68,12 @@ struct NumberDetailSheet: View {
             VStack(alignment: .leading, spacing: 6) {
                 Eyebrow(number.title)
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text(headline.value).largeStyle(52)
+                    Text(headline.value).largeStyle(44).lineLimit(1).minimumScaleFactor(0.7)
                     if let change = headline.change {
-                        Text(change.text).font(.system(size: 18, weight: .bold)).monospacedDigit().foregroundStyle(change.color)
+                        Text(change.text).font(.system(size: 17, weight: .bold)).monospacedDigit().foregroundStyle(change.color).lineLimit(1).fixedSize()
                     }
                 }
-                Text(headline.units).font(.system(size: 18)).foregroundStyle(Theme.secondary)
+                Text(headline.units).font(.system(size: 17)).foregroundStyle(Theme.secondary).fixedSize(horizontal: false, vertical: true)
             }
             Spacer()
             if showsRange {

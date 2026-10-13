@@ -41,10 +41,10 @@ struct ScreenHeader<Trailing: View>: View {
     var body: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(kicker).font(Theme.body()).foregroundStyle(Theme.secondary)
-                Text(title).titleStyle()
+                Text(kicker).font(Theme.body()).foregroundStyle(Theme.secondary).lineLimit(2)
+                Text(title).titleStyle().lineLimit(1)
             }
-            Spacer()
+            Spacer(minLength: 12)
             trailing()
         }
         .padding(.top, 28)
@@ -83,6 +83,8 @@ struct DottedNumber: View {
     var font: Font = Theme.stat()
     var color: Color = Theme.ink
     var tracking: CGFloat = 0
+    /// Hero and large numbers stay tappable but skip the underline, as in the mockups.
+    var dotted: Bool = true
 
     var body: some View {
         Button {
@@ -93,7 +95,8 @@ struct DottedNumber: View {
                 .monospacedDigit()
                 .foregroundStyle(color)
                 .tracking(tracking)
-                .underline(true, pattern: .dot, color: Theme.accent)
+                .lineLimit(1)
+                .underline(dotted, pattern: .dot, color: Theme.accent)
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("number.\(number.id)")
@@ -111,10 +114,14 @@ struct PillChip: View {
         Button(action: action) {
             Text(title)
                 .font(Theme.body(.semibold))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.85)
                 .foregroundStyle(active ? Theme.onInk : Theme.ink)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(Capsule().fill(active ? Theme.ink : Theme.pill))
+                .frame(maxWidth: .infinity)
+                .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(active ? Theme.ink : Theme.pill))
         }
         .buttonStyle(.plain)
     }
@@ -188,6 +195,8 @@ struct SegmentedPills<T: Hashable>: View {
                 } label: {
                     Text(title)
                         .font(Theme.bodySmall(.semibold))
+                        .lineLimit(1)
+                        .fixedSize()
                         .foregroundStyle(selection == value ? Theme.ink : Theme.secondary)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
@@ -198,6 +207,7 @@ struct SegmentedPills<T: Hashable>: View {
         }
         .padding(3)
         .background(Capsule().fill(Theme.pill))
+        .layoutPriority(1)
     }
 }
 

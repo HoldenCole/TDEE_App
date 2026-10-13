@@ -51,7 +51,7 @@ struct ProgressTabView: View {
             let count = (try? model.context.fetchCount(FetchDescriptor<ProgressPhoto>())) ?? 0
             return count == 0 ? "No photos yet" : "\(count) photo\(count == 1 ? "" : "s")"
         case .body:
-            return "Trend weight, lean mass, body fat"
+            return "Body composition"
         }
     }
 
@@ -365,9 +365,9 @@ struct PhotosView: View {
 
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                PillChip(title: "All", active: pose == nil) { pose = nil }
+                PillChip(title: "All", active: pose == nil) { pose = nil }.fixedSize()
                 ForEach(PhotoPose.allCases) { p in
-                    PillChip(title: p.title, active: pose == p) { pose = p }
+                    PillChip(title: p.title, active: pose == p) { pose = p }.fixedSize()
                 }
             }
         }
@@ -576,8 +576,16 @@ struct BodyView: View {
         }
         Hairline().padding(.vertical, 18)
         section("Lean mass", value: s.body.leanMassLb.map(Fmt.lb) ?? "—", unit: "lb", number: .leanMass) {
-            let series = model.log.filter { $0.date >= range.start() }.compactMap { day in day.leanMassLb.map { DatedValue(date: day.date, value: $0) } }
-            if series.count >= 2 { LineSeriesChart(series: series, height: 150, yDigits: 1) } else { EmptyHint(text: "Needs lean mass from a Health-connected scale, or body fat in Dials.") }
+            let logged = model.log.filter { $0.date >= range.start() }.compactMap { day in day.leanMassLb.map { DatedValue(date: day.date, value: $0) } }
+            // Without scale data, derive it from trend weight and the body-fat dial.
+            let derived: [DatedValue] = (logged.count >= 2 || s.body.bodyFatPercent == nil) ? [] : s.trend.filter { $0.date >= range.start() }.map { DatedValue(date: $0.date, value: $0.trendLb * (1 - (s.body.bodyFatPercent ?? 0) / 100)) }
+            let series = logged.count >= 2 ? logged : derived
+            if series.count >= 2 {
+                LineSeriesChart(series: series, height: 150, yDigits: 1)
+                if logged.count < 2 { Text("Estimated from trend weight at \(Fmt.dec(s.body.bodyFatPercent ?? 0, 1))% body fat.").captionStyle(Theme.tertiary) }
+            } else {
+                EmptyHint(text: "Needs lean mass from a Health-connected scale, or body fat in Dials.")
+            }
         }
         Hairline().padding(.vertical, 18)
         section("Body fat", value: s.body.bodyFatPercent.map { Fmt.dec($0, 1) } ?? "—", unit: "%", number: .bodyFat) {
@@ -590,7 +598,7 @@ struct BodyView: View {
         VStack(alignment: .leading, spacing: 10) {
             Eyebrow(title)
             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                DottedNumber(text: value, number: number, font: Theme.large(36), tracking: -1.4)
+                DottedNumber(text: value, number: number, font: Theme.large(36), tracking: -1.4, dotted: false)
                 Text(unit).font(Theme.body()).foregroundStyle(Theme.secondary)
             }
             content()

@@ -45,6 +45,7 @@ struct CoachView: View {
         }
         .background(Theme.surface)
         .toolbar(.hidden, for: .navigationBar)
+        .toolbar(.hidden, for: .tabBar)
     }
 
     private var header: some View {

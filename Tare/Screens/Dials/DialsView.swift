@@ -66,6 +66,7 @@ struct DialsView: View {
                                 group = g
                                 model.dialsSearch = ""
                             }
+                            .fixedSize()
                         }
                     }
                 }
@@ -397,7 +398,8 @@ enum DialFormat {
             digits += 1
         }
         var text = String(format: "%.\(digits)f", v)
-        if digits > 0 {
+        // Two decimals read as a setting ("1.00 g/lb"); finer steps trim their trailing zeros.
+        if digits > 2 {
             while text.hasSuffix("0") { text.removeLast() }
             if text.hasSuffix(".") { text.removeLast() }
         }
@@ -437,6 +439,7 @@ struct PresetsBlock: View {
                             PillChip(title: p.name, active: model.activePresetName == p.name) {
                                 model.applyPreset(p)
                             }
+                            .fixedSize()
                             .contextMenu {
                                 Button("Export JSON") { export(p) }
                                 Button("Delete", role: .destructive) { model.deletePreset(p) }

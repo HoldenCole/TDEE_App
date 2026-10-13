@@ -53,12 +53,10 @@ struct PlanView: View {
     }
 
     private var phaseChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(Phase.allCases, id: \.self) { phase in
-                    PillChip(title: phase.title, active: d.phase == phase) {
-                        model.setDial(.phase, .choice(phase.rawValue))
-                    }
+        HStack(spacing: 6) {
+            ForEach(Phase.allCases, id: \.self) { phase in
+                PillChip(title: phase.title, active: d.phase == phase) {
+                    model.setDial(.phase, .choice(phase.rawValue))
                 }
             }
         }
