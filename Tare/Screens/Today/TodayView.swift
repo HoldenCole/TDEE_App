@@ -209,6 +209,7 @@ struct CoachCard: View {
         .background(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous).fill(Theme.coachGradient))
         .contentShape(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
         .onTapGesture { open() }
+        .accessibilityIdentifier("coachCard")
     }
 }
 

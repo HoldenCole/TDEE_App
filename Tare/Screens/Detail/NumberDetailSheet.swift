@@ -40,6 +40,7 @@ struct NumberDetailSheet: View {
                 }
                 .buttonStyle(.plain)
                 InkButton(title: "Done") { dismiss() }
+                    .accessibilityIdentifier("detail.done")
             }
             .padding(.horizontal, Theme.sideMargin)
             .padding(.bottom, 12)

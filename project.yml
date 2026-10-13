@@ -87,11 +87,28 @@ targets:
       properties:
         com.apple.security.application-groups: [group.com.holdencole.tare]
 
+  TareUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: TareUITests
+    dependencies:
+      - target: Tare
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.holdencole.tare.uitests
+        GENERATE_INFOPLIST_FILE: YES
+
 schemes:
   Tare:
     build:
       targets:
         Tare: all
         TareWidget: all
+        TareUITests: [test]
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - TareUITests

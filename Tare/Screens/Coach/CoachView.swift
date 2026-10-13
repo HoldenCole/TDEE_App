@@ -53,6 +53,7 @@ struct CoachView: View {
                 model.showCoachScreen = false
                 dismiss()
             }
+            .accessibilityIdentifier("coach.back")
             .padding(.top, 8)
             VStack(alignment: .leading, spacing: 6) {
                 Eyebrow("Coach · \(Format.weekdayName(model.dials.coachCheckInWeekday, calendar: .current)) check-in", color: Theme.accent)

@@ -1,0 +1,89 @@
+# Runs the app in the iOS Simulator with demo data, walks every screen, and publishes
+# screenshots to the ci-screenshots branch so they can be reviewed without a device.
+name: UI smoke
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XC=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$XC" ]; then sudo xcode-select -s "$XC"; fi
+          xcodebuild -version
+          xcrun simctl list devices available | grep -i "iphone 16" | head -3
+
+      - name: Run UI tests
+        run: |
+          set -o pipefail
+          xcodebuild test -project Tare.xcodeproj -scheme Tare \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -only-testing:TareUITests \
+            -resultBundlePath build/UI.xcresult \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee ui.log | grep -E "error:|Test Case|Test Suite|passed|failed|BUILD|\*\* " || true
+          grep -q "TEST SUCCEEDED" ui.log && exit 0
+          echo "----- failures with context -----"
+          grep -B5 -A15 -E "error:|failed" ui.log | head -300
+          exit 1
+
+      - name: Export screenshots
+        if: always()
+        run: |
+          mkdir -p build/shots screenshots
+          if [ -d build/UI.xcresult ]; then
+            xcrun xcresulttool export attachments --path build/UI.xcresult --output-path build/shots || true
+          fi
+          ls -la build/shots || true
+          python3 - <<'PY'
+          import json, os, shutil, glob
+          src = "build/shots"
+          out = "screenshots"
+          manifest = os.path.join(src, "manifest.json")
+          named = 0
+          if os.path.exists(manifest):
+              data = json.load(open(manifest))
+              def walk(node):
+                  global named
+                  if isinstance(node, dict):
+                      if "exportedFileName" in node and "suggestedHumanReadableName" in node:
+                          name = node["suggestedHumanReadableName"]
+                          base = os.path.splitext(name)[0] or name
+                          target = os.path.join(out, base + ".png")
+                          shutil.copy(os.path.join(src, node["exportedFileName"]), target)
+                          named += 1
+                      for v in node.values(): walk(v)
+                  elif isinstance(node, list):
+                      for v in node: walk(v)
+              walk(data)
+          if named == 0:
+              for i, f in enumerate(sorted(glob.glob(os.path.join(src, "*.png")))):
+                  shutil.copy(f, os.path.join(out, os.path.basename(f)))
+          print("screenshots:", sorted(os.listdir(out)))
+          PY
+
+      - name: Publish screenshots
+        if: always()
+        run: |
+          if [ -z "$(ls -A screenshots 2>/dev/null)" ]; then echo "no screenshots"; exit 0; fi
+          cp ui.log screenshots/ui.log || true
+          git config user.name "tare-ci"
+          git config user.email "ci@users.noreply.github.com"
+          git stash -u -q || true
+          git checkout -q --orphan ci-screenshots
+          git rm -rfq . >/dev/null 2>&1 || true
+          git stash pop -q || true
+          git add -f screenshots
+          git commit -qm "Screenshots from ${{ github.ref_name }} @ ${{ github.sha }} (run ${{ github.run_number }})"
+          git push -f origin ci-screenshots

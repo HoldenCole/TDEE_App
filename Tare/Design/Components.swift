@@ -96,6 +96,7 @@ struct DottedNumber: View {
                 .underline(true, pattern: .dot, color: Theme.accent)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("number.\(number.id)")
     }
 }
 

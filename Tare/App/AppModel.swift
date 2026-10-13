@@ -49,6 +49,13 @@ final class AppModel {
         self.snapshot = Engine.compute(log: [], dials: loaded)
         _ = AppState.firstLaunch
         reloadAll()
+        if DemoData.requestedAtLaunch {
+            DemoData.seed(into: self)
+            completeOnboarding()
+        }
+        if CommandLine.arguments.contains("-TareSkipOnboarding") {
+            completeOnboarding()
+        }
     }
 
     // MARK: Loading and recompute
@@ -218,7 +225,7 @@ final class AppModel {
     /// Changes the charts mark with a dashed rule: user and coach changes to dials that move
     /// the target. Phase switches are drawn separately, as shaded spans.
     func chartMarkers(from start: Date) -> [DialChange] {
-        dialChanges().filter { $0.date >= start && $0.source != .undo && $0.dialKey != .phase }
+        dialChanges().filter { $0.date >= start && $0.source != .undo && $0.source != .onboarding && $0.dialKey != .phase }
             .filter { DialCatalog.spec(for: $0.dialKey, in: dials)?.affectsTarget ?? true }
     }
 

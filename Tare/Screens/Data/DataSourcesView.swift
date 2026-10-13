@@ -94,6 +94,12 @@ struct DataSourcesView: View {
             }
 
             section("Reset") {
+                Button("Load demo data") {
+                    DemoData.seed(into: model)
+                    model.showToast("Loaded six weeks of demo data")
+                }
+                .font(Theme.body(.semibold)).foregroundStyle(Theme.accent)
+                Text("Replaces everything with a sample lean bulk so you can try every screen before your own data arrives.").font(Theme.caption()).foregroundStyle(Theme.secondary)
                 Button("Delete all data") { confirmWipe = true }.font(Theme.body(.semibold)).foregroundStyle(Theme.behind)
             }
 

@@ -14,6 +14,7 @@
 		120F5324FE238CDD7FE7C46D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A91ED5645FC0BDAEDCE9E9F /* Models.swift */; };
 		2C103A6D8B63E504BCED0FA8 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BA14BB57457C7650560ACE /* Keychain.swift */; };
 		4A391A5C634BC7526E78350C /* ProgressTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 258D6E55360454184BE7B1DC /* ProgressTabView.swift */; };
+		4CDE4B9D37A8642808B1389C /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F980DBD1438630F2340F7370 /* SmokeTests.swift */; };
 		61A94449B27258A159389B18 /* HevyConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10DA96B794564030B01C4A12 /* HevyConnector.swift */; };
 		6301641854662E906BC073F2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77F4D8991CE545D8347E7C6 /* AppState.swift */; };
 		692499D94B866CCED25F2B68 /* TareFiles in Frameworks */ = {isa = PBXBuildFile; productRef = 6B4F44D872B436A00E5279EE /* TareFiles */; };
@@ -34,12 +35,20 @@
 		C0EC8D22EFB24B9AB74B87A8 /* NumberID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E850178EBC94F6A6664E35 /* NumberID.swift */; };
 		C5F68FD74E7CC7D49242A4AF /* TareWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71B2B899BFD1BC3F278F9BFA /* TareWidget.swift */; };
 		E317A0AC1DA1091D7B57B1AE /* TrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1559740E649DC10CE5FE152 /* TrendView.swift */; };
+		E36BAF98CFD95A0611ED8E3B /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1426581F25D0E107DE115F3 /* DemoData.swift */; };
 		F64A1623D85EC9420B9CEE8C /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474B3E515AD89F59407ABE82 /* Components.swift */; };
 		F7F667ACD1F95FD5F26FDC60 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66822727A3CA0805F69EE700 /* WidgetSnapshot.swift */; };
 		FBEA88DA2852DB29359373AA /* TareWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D9633C81B5F34E50C550B1AA /* TareWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		171E917F9FD2AEE27AD060E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7759FC83CBB39C66DCED798C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0E8762E0412F9C77CBBFA118;
+			remoteInfo = Tare;
+		};
 		DB8C11751E458E7F79FA4EFC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7759FC83CBB39C66DCED798C /* Project object */;
@@ -66,6 +75,7 @@
 /* Begin PBXFileReference section */
 		015F68322836C26352F1AECB /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		10DA96B794564030B01C4A12 /* HevyConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HevyConnector.swift; sourceTree = "<group>"; };
+		15B44F4D3CC4BC97AEFC2756 /* TareUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TareUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A91ED5645FC0BDAEDCE9E9F /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		1BD92828AAB4E5557C151384 /* TareEngine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TareEngine; path = TareEngine; sourceTree = SOURCE_ROOT; };
 		205EEF769B55BEC6F9093D81 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -95,8 +105,10 @@
 		D77F4D8991CE545D8347E7C6 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D9633C81B5F34E50C550B1AA /* TareWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TareWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBB5C54CF6BA0C36ED1F2112 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		E1426581F25D0E107DE115F3 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		EF5899AAA49388E99CF5BC47 /* Tare.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1559740E649DC10CE5FE152 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendView.swift; sourceTree = "<group>"; };
+		F980DBD1438630F2340F7370 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		FAF8C2A6150968AD57835931 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -182,6 +194,14 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		4F878B93ABCCE178397ACE87 /* TareUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F980DBD1438630F2340F7370 /* SmokeTests.swift */,
+			);
+			path = TareUITests;
+			sourceTree = "<group>";
+		};
 		510CE373271DD31E2AED8760 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,6 +243,7 @@
 				510CE373271DD31E2AED8760 /* Packages */,
 				8DA029EEAA22B1E7B2F0DFB2 /* Shared */,
 				FD19BEE3EC97AE60CA5DDACC /* Tare */,
+				4F878B93ABCCE178397ACE87 /* TareUITests */,
 				842B7CB180FF8D876F64623F /* TareWidget */,
 				81C6A75A87BBBFEDDA9C8C49 /* Products */,
 			);
@@ -232,6 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				EF5899AAA49388E99CF5BC47 /* Tare.app */,
+				15B44F4D3CC4BC97AEFC2756 /* TareUITests.xctest */,
 				D9633C81B5F34E50C550B1AA /* TareWidget.appex */,
 			);
 			name = Products;
@@ -258,6 +280,7 @@
 		861B8F4B93D15E5FE3064F65 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E1426581F25D0E107DE115F3 /* DemoData.swift */,
 				D2767FF0B608002EFC47CA9F /* ExportService.swift */,
 				9957DADD6A7BF82710930C3E /* HealthSync.swift */,
 				10DA96B794564030B01C4A12 /* HevyConnector.swift */,
@@ -308,6 +331,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		07F0820E4BB507C06E3C622D /* TareUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0C2385D44965864B38F606EF /* Build configuration list for PBXNativeTarget "TareUITests" */;
+			buildPhases = (
+				6CD0AE262CF6BB68CB6C3971 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				470AD61B0156BCB1C519946E /* PBXTargetDependency */,
+			);
+			name = TareUITests;
+			packageProductDependencies = (
+			);
+			productName = TareUITests;
+			productReference = 15B44F4D3CC4BC97AEFC2756 /* TareUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		0E8762E0412F9C77CBBFA118 /* Tare */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DC3A82025079DB276485A641 /* Build configuration list for PBXNativeTarget "Tare" */;
@@ -356,6 +397,11 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					07F0820E4BB507C06E3C622D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = 0E8762E0412F9C77CBBFA118;
+					};
 					0E8762E0412F9C77CBBFA118 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -386,6 +432,7 @@
 			targets = (
 				0E8762E0412F9C77CBBFA118 /* Tare */,
 				EE7DFE93D024911FCF79037E /* TareWidget */,
+				07F0820E4BB507C06E3C622D /* TareUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -402,6 +449,7 @@
 				755CCB45E9C9E185A78E76BE /* CoachView.swift in Sources */,
 				F64A1623D85EC9420B9CEE8C /* Components.swift in Sources */,
 				0C04F9BD92AEDFE1E3A7B6B2 /* DataSourcesView.swift in Sources */,
+				E36BAF98CFD95A0611ED8E3B /* DemoData.swift in Sources */,
 				906C0A59B9204EFFE8612975 /* DialsView.swift in Sources */,
 				A05A315CF685129FEDD17519 /* ExportService.swift in Sources */,
 				992B312C0E33DF9C0AD4B448 /* HealthSync.swift in Sources */,
@@ -432,9 +480,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6CD0AE262CF6BB68CB6C3971 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CDE4B9D37A8642808B1389C /* SmokeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		470AD61B0156BCB1C519946E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0E8762E0412F9C77CBBFA118 /* Tare */;
+			targetProxy = 171E917F9FD2AEE27AD060E9 /* PBXContainerItemProxy */;
+		};
 		F49785DE7A847D1B7E14D66F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = EE7DFE93D024911FCF79037E /* TareWidget */;
@@ -459,6 +520,23 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		2D1B0B4AAD04B09D1C4CA797 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.holdencole.tare.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Tare;
+			};
+			name = Release;
 		};
 		40721FAF7D8F5ADA520E14DD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -631,6 +709,23 @@
 			};
 			name = Release;
 		};
+		B1AE580950FE4637BE20F134 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.holdencole.tare.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Tare;
+			};
+			name = Debug;
+		};
 		B5C04F9B9E3A76F4A919F163 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -651,6 +746,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0C2385D44965864B38F606EF /* Build configuration list for PBXNativeTarget "TareUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1AE580950FE4637BE20F134 /* Debug */,
+				2D1B0B4AAD04B09D1C4CA797 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		10126E07A198473E35139FA8 /* Build configuration list for PBXNativeTarget "TareWidget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
