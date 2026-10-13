@@ -62,8 +62,9 @@ struct PhaseLayer: ChartContent {
                 RuleMark(x: .value("Phase", span.start))
                     .foregroundStyle(span.color)
                     .lineStyle(StrokeStyle(lineWidth: 2))
-                    .annotation(position: .overlay, alignment: .topLeading, spacing: 4, overflowResolution: .init(x: .fit, y: .fit)) {
+                    .annotation(position: .trailing, alignment: .top, spacing: 4, overflowResolution: .init(x: .fit, y: .fit)) {
                         Text(span.title).font(.system(size: 11, weight: .semibold)).foregroundStyle(span.color)
+                            .fixedSize()
                             .padding(.horizontal, 5).padding(.vertical, 2)
                             .background(Capsule().fill(Theme.surface.opacity(0.85)))
                     }
