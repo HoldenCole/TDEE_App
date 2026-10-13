@@ -89,6 +89,7 @@ struct DialsView: View {
                         SettingRow(title: "Data sources", subtitle: dataSourcesSubtitle) { EmptyView() }
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("dials.dataSources")
                     Hairline()
                 }
 

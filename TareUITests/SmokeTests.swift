@@ -60,12 +60,61 @@ final class SmokeTests: XCTestCase {
         tab(app, "Plan")
         shot(app, "09-plan")
 
+        tapIfPresent(app.descendants(matching: .any).matching(identifier: "plan.dietBreak").firstMatch)
+        shot(app, "09b-plan-dietbreak")
+        tapIfPresent(app.buttons["Start 1 week at maintenance today"].firstMatch)
+        app.swipeUp()
+        pause(0.8)
+        shot(app, "09c-plan-bottom")
+
+        tab(app, "Trend")
+        shot(app, "04b-trend-dietbreak")
+
         tab(app, "Dials")
         shot(app, "10-dials-body")
         tapIfPresent(app.buttons["Activity"].firstMatch)
         shot(app, "11-dials-activity")
         tapIfPresent(app.buttons["Macros"].firstMatch)
         shot(app, "12-dials-macros")
+        tapIfPresent(app.buttons["Goal"].firstMatch)
+        shot(app, "13-dials-goal")
+        tapIfPresent(app.buttons["Body"].firstMatch)
+        app.swipeUp()
+        pause(0.8)
+        let dataSources = app.descendants(matching: .any).matching(identifier: "dials.dataSources").firstMatch
+        if dataSources.waitForExistence(timeout: 3) {
+            dataSources.tap()
+            pause(1.5)
+            shot(app, "14-data-sources")
+            app.navigationBars.buttons.firstMatch.tap()
+            pause(1)
+        }
+
+        tab(app, "Today")
+        tapIfPresent(app.buttons["today.log"].firstMatch)
+        shot(app, "15-log-sheet")
+    }
+
+    func testOnboarding() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-TareShowOnboarding"]
+        if ProcessInfo.processInfo.environment["TARE_DARK"] == "1" {
+            app.launchArguments.append("-TareForceDark")
+        }
+        app.launch()
+        let start = app.buttons["onboarding.start"].firstMatch
+        XCTAssertTrue(start.waitForExistence(timeout: 30), "welcome screen never appeared")
+        shot(app, "20-onboarding-welcome")
+        start.tap()
+        pause(1)
+        shot(app, "21-onboarding-health")
+        tapIfPresent(app.buttons["onboarding.skipHealth"].firstMatch)
+        shot(app, "22-onboarding-profile")
+        tapIfPresent(app.buttons["onboarding.continue"].firstMatch)
+        shot(app, "23-onboarding-phase")
+        tapIfPresent(app.buttons["onboarding.finish"].firstMatch)
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "app did not open after onboarding")
+        shot(app, "24-today-empty")
     }
 
     private func tab(_ app: XCUIApplication, _ name: String) {

@@ -35,7 +35,7 @@ struct OnboardingView: View {
                 .font(.system(size: 17)).foregroundStyle(Theme.secondary).fixedSize(horizontal: false, vertical: true)
             Text("Every constant in the math is a dial you can change. Nothing leaves your phone.")
                 .font(.system(size: 17)).foregroundStyle(Theme.secondary).fixedSize(horizontal: false, vertical: true)
-            InkButton(title: "Get started") { withAnimation { step = 1 } }.padding(.top, 20)
+            InkButton(title: "Get started") { withAnimation { step = 1 } }.padding(.top, 20).accessibilityIdentifier("onboarding.start")
         }
     }
 
@@ -57,6 +57,7 @@ struct OnboardingView: View {
                 withAnimation { step = 2 }
             }
             .font(Theme.body(.semibold)).foregroundStyle(Theme.accent)
+            .accessibilityIdentifier("onboarding.skipHealth")
         }
     }
 
@@ -106,7 +107,7 @@ struct OnboardingView: View {
                 TextField("%", text: $bodyFat).keyboardType(.decimalPad).multilineTextAlignment(.trailing).frame(width: 70)
                     .padding(8).background(RoundedRectangle(cornerRadius: 8).fill(Theme.pill))
             }
-            InkButton(title: "Continue") { withAnimation { step = 3 } }.padding(.top, 10)
+            InkButton(title: "Continue") { withAnimation { step = 3 } }.padding(.top, 10).accessibilityIdentifier("onboarding.continue")
         }
     }
 
@@ -131,7 +132,7 @@ struct OnboardingView: View {
                 }
             }
             Text("You can change this and the rate on the Plan tab any time.").font(Theme.caption()).foregroundStyle(Theme.tertiary)
-            InkButton(title: "Open Tare") { finish() }.padding(.top, 10)
+            InkButton(title: "Open Tare") { finish() }.padding(.top, 10).accessibilityIdentifier("onboarding.finish")
         }
     }
 

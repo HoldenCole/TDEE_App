@@ -56,6 +56,10 @@ final class AppModel {
         if CommandLine.arguments.contains("-TareSkipOnboarding") {
             completeOnboarding()
         }
+        if CommandLine.arguments.contains("-TareShowOnboarding") {
+            onboarded = false
+            AppState.onboarded = false
+        }
     }
 
     // MARK: Loading and recompute

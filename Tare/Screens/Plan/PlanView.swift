@@ -172,6 +172,7 @@ struct PlanView: View {
                 dietBreakWeeks = max(1, d.dietBreakWeeks)
                 showDietBreak = true
             }
+            .accessibilityIdentifier("plan.dietBreak")
             Hairline()
             SettingRow(title: "Refeed days", subtitle: "Extra calories on a weekday") {
                 Text(model.refeedSummary).font(.system(size: 17, weight: .semibold)).foregroundStyle(Theme.secondary)

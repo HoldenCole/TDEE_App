@@ -51,7 +51,7 @@ struct TodayView: View {
                 }
 
                 HStack {
-                    PillButton(title: "Log today") { showLog = true }
+                    PillButton(title: "Log today") { showLog = true }.accessibilityIdentifier("today.log")
                     Spacer()
                 }
                 .padding(.top, 20)
