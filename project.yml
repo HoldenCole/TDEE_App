@@ -50,6 +50,7 @@ targets:
         CFBundleDisplayName: Tare
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIRequiresFullScreen: true
         UIUserInterfaceStyle: Light
         NSHealthShareUsageDescription: Tare reads your weight, food, steps, active energy and workouts from Health to estimate how many calories you burn. It never writes to Health.
         NSHealthUpdateUsageDescription: Tare does not write to Health.
