@@ -15,18 +15,37 @@ A native iPhone app for lifters who want control over every number behind their 
 
 Everything runs on the phone. There is no server and no account.
 
+## No Mac? Build in the cloud
+
+Two GitHub Actions workflows live in `.github/workflows/`. The repo is public, so GitHub's macOS runners are free.
+
+- **Build** runs on every push: package tests, then an unsigned compile of the app. This is how compile errors get found and fixed without a Mac.
+- **TestFlight** runs on demand and needs the setup below. It mints a signing certificate and provisioning profiles with your App Store Connect API key, archives, uploads to TestFlight, then revokes what it created so nothing piles up in your account.
+
+### TestFlight without a Mac: one-time setup (about 15 minutes in a browser)
+
+1. **App Group.** [developer.apple.com/account](https://developer.apple.com/account) → Certificates, Identifiers & Profiles → Identifiers → the dropdown at the top right → App Groups → `+`. Description `Tare`, identifier `group.com.holdencole.tare`.
+2. **App ID for the app.** Identifiers → `+` → App IDs → App → Description `Tare`, Bundle ID explicit `com.holdencole.tare`. Tick **HealthKit** and **App Groups**; next to App Groups press Configure and select the group from step 1. Register.
+3. **App ID for the widget.** Same again with Bundle ID `com.holdencole.tare.widget`. Tick only **App Groups** and select the same group.
+4. **API key.** [appstoreconnect.apple.com](https://appstoreconnect.apple.com) → Users and Access → Integrations → App Store Connect API → Team Keys → `+`. Name `Tare CI`, access **Admin**. Note the **Issuer ID** (top of the page) and the **Key ID**, and download the `.p8` file once (it can't be downloaded again).
+5. **App record.** App Store Connect → Apps → `+` → New App → iOS, a name (App Store names are unique worldwide, so "Tare" alone may be taken; try "Tare Calorie Dials"), primary language, Bundle ID `com.holdencole.tare`, SKU `tare`. The name only matters for the store; TestFlight shows it too.
+6. **Team ID.** developer.apple.com/account → Membership details → Team ID (10 characters).
+7. **GitHub secrets.** github.com/HoldenCole/TDEE_App → Settings → Secrets and variables → Actions → New repository secret, four times:
+   - `ASC_KEY_ID`: the Key ID from step 4
+   - `ASC_ISSUER_ID`: the Issuer ID from step 4
+   - `ASC_KEY_P8`: the whole contents of the `.p8` file, including the BEGIN and END lines
+   - `APPLE_TEAM_ID`: from step 6
+8. **Run it.** The TestFlight workflow is started from the Actions tab (it has to exist on the `main` branch to show up there). Each run uploads a build numbered after the run. Once App Store Connect finishes processing (a few minutes), add yourself under TestFlight → Internal Testing and install from the TestFlight app on your phone.
+
+If you change the bundle ID, change it in `project.yml`, `fastlane/Fastfile`, `fastlane/Appfile`, `Shared/WidgetSnapshot.swift` and the App Group everywhere, then regenerate the project.
+
 ## Building on your Mac
 
 You need Xcode 16 or newer and an Apple Developer account (a free Apple ID works for 7-day installs).
 
-### Option A: XcodeGen (recommended)
+### Option A: open the committed project
 
-```bash
-brew install xcodegen
-cd TDEE_App
-xcodegen generate
-open Tare.xcodeproj
-```
+`Tare.xcodeproj` is committed, generated from `project.yml` with XcodeGen. Open it directly. If you add files, either add them in Xcode or run `brew install xcodegen && xcodegen generate` to regenerate.
 
 Then in Xcode:
 
