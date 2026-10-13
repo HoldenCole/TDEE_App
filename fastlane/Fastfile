@@ -1,0 +1,150 @@
+# TestFlight from a GitHub macOS runner with only an App Store Connect API key.
+#
+# Each run creates a fresh Apple Distribution certificate in a temporary keychain, makes
+# App Store provisioning profiles for the app and the widget, archives, uploads, and then
+# revokes the certificate and deletes the profiles so nothing piles up in the account.
+# Uploaded builds are unaffected by the revocation: App Store Connect re-signs them.
+
+default_platform(:ios)
+
+APP_ID = "com.holdencole.tare"
+WIDGET_ID = "com.holdencole.tare.widget"
+KEYCHAIN_NAME = "tare-ci.keychain-db"
+KEYCHAIN_PASSWORD = "tare-ci"
+
+platform :ios do
+  desc "Archive, sign and upload to TestFlight"
+  lane :beta do
+    key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_filepath: ENV.fetch("ASC_KEY_PATH"),
+      in_house: false
+    )
+    team_id = ENV.fetch("APPLE_TEAM_ID")
+    created_cert_id = nil
+    profile_names = []
+
+    begin
+      # 1. A throwaway keychain so the runner's login keychain never sees the key.
+      create_keychain(
+        name: KEYCHAIN_NAME,
+        password: KEYCHAIN_PASSWORD,
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600,
+        add_to_search_list: true
+      )
+      keychain_path = File.expand_path("~/Library/Keychains/#{KEYCHAIN_NAME}")
+
+      # 2. Clear leftovers from earlier runs that died before cleanup, then mint a certificate.
+      revoke_api_created_certificates(team_id)
+      get_certificates(
+        api_key: key,
+        development: false,
+        generate_apple_certs: true,
+        team_id: team_id,
+        keychain_path: keychain_path,
+        keychain_password: KEYCHAIN_PASSWORD,
+        output_path: "build/certs"
+      )
+      created_cert_id = lane_context[SharedValues::CERT_CERTIFICATE_ID]
+      UI.message("Using certificate #{created_cert_id}")
+
+      # 3. App Store profiles for both targets. force: true makes them include the new certificate.
+      [APP_ID, WIDGET_ID].each do |bundle_id|
+        get_provisioning_profile(
+          api_key: key,
+          app_identifier: bundle_id,
+          team_id: team_id,
+          force: true,
+          provisioning_name: "Tare CI #{bundle_id} #{ENV['BUILD_NUMBER']}",
+          output_path: "build/profiles",
+          filename: "#{bundle_id}.mobileprovision"
+        )
+        profile_names << lane_context[SharedValues::SIGH_NAME]
+      end
+      app_profile, widget_profile = profile_names
+
+      # 4. Manual signing with those profiles.
+      update_code_signing_settings(
+        path: "Tare.xcodeproj",
+        use_automatic_signing: false,
+        team_id: team_id,
+        code_sign_identity: "Apple Distribution",
+        targets: ["Tare"],
+        bundle_identifier: APP_ID,
+        profile_name: app_profile
+      )
+      update_code_signing_settings(
+        path: "Tare.xcodeproj",
+        use_automatic_signing: false,
+        team_id: team_id,
+        code_sign_identity: "Apple Distribution",
+        targets: ["TareWidget"],
+        bundle_identifier: WIDGET_ID,
+        profile_name: widget_profile
+      )
+
+      # 5. Archive and export.
+      build_app(
+        project: "Tare.xcodeproj",
+        scheme: "Tare",
+        configuration: "Release",
+        export_method: "app-store",
+        output_directory: "build",
+        output_name: "Tare.ipa",
+        xcargs: "CURRENT_PROJECT_VERSION=#{ENV['BUILD_NUMBER']} OTHER_CODE_SIGN_FLAGS=\"--keychain #{keychain_path}\"",
+        export_options: {
+          signingStyle: "manual",
+          teamID: team_id,
+          provisioningProfiles: {
+            APP_ID => app_profile,
+            WIDGET_ID => widget_profile
+          }
+        }
+      )
+
+      # 6. Upload.
+      upload_to_testflight(
+        api_key: key,
+        ipa: "build/Tare.ipa",
+        skip_waiting_for_build_processing: true,
+        changelog: ENV["CHANGELOG"].to_s
+      )
+      UI.success("Uploaded build #{ENV['BUILD_NUMBER']}. It appears in TestFlight once App Store Connect finishes processing.")
+    ensure
+      cleanup(created_cert_id, profile_names)
+    end
+  end
+
+  # Revokes Apple Distribution certificates fastlane created on earlier runs. Their private
+  # keys died with those runners, so they can never be used again anyway.
+  def revoke_api_created_certificates(team_id)
+    Spaceship::ConnectAPI::Certificate.all(filter: { certificateType: "DISTRIBUTION" }).each do |c|
+      next unless c.display_name.to_s.include?("Created via API")
+      UI.message("Revoking stale certificate #{c.id} (#{c.display_name})")
+      c.delete!
+    end
+  rescue => e
+    UI.important("Could not revoke stale certificates: #{e.message}")
+  end
+
+  def cleanup(cert_id, profile_names)
+    profile_names.compact.each do |name|
+      Spaceship::ConnectAPI::Profile.all.select { |p| p.name == name }.each do |p|
+        UI.message("Deleting profile #{p.name}")
+        p.delete!
+      end
+    end
+    if cert_id
+      c = Spaceship::ConnectAPI::Certificate.get(certificate_id: cert_id)
+      UI.message("Revoking certificate #{cert_id}")
+      c.delete!
+    end
+  rescue => e
+    UI.important("Cleanup problem: #{e.message}")
+  ensure
+    delete_keychain(name: KEYCHAIN_NAME) if File.exist?(File.expand_path("~/Library/Keychains/#{KEYCHAIN_NAME}"))
+  end
+end

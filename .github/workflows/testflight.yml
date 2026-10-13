@@ -1,0 +1,57 @@
+# Archives, signs and uploads to TestFlight using only an App Store Connect API key.
+# Secrets needed: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (the .p8 file's contents), APPLE_TEAM_ID.
+# See README.md "TestFlight without a Mac".
+name: TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      changelog:
+        description: "What to tell testers"
+        required: false
+        default: "New build"
+
+jobs:
+  beta:
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      ASC_KEY_PATH: ${{ github.workspace }}/asc_key.p8
+      BUILD_NUMBER: ${{ github.run_number }}
+      CHANGELOG: ${{ github.event.inputs.changelog }}
+      FASTLANE_SKIP_UPDATE_CHECK: "1"
+      FASTLANE_HIDE_CHANGELOG: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XC=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$XC" ]; then sudo xcode-select -s "$XC"; fi
+          xcodebuild -version
+
+      - name: Check secrets
+        run: |
+          for v in ASC_KEY_ID ASC_ISSUER_ID APPLE_TEAM_ID; do
+            if [ -z "${!v}" ]; then echo "Missing secret $v"; exit 1; fi
+          done
+          if [ -z "${{ secrets.ASC_KEY_P8 }}" ]; then echo "Missing secret ASC_KEY_P8"; exit 1; fi
+
+      - name: Write API key
+        run: printf '%s' "${{ secrets.ASC_KEY_P8 }}" > "$ASC_KEY_PATH"
+
+      - name: Build and upload
+        run: fastlane ios beta
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fastlane-logs
+          path: |
+            fastlane/report.xml
+            ~/Library/Logs/gym/*.log
+          if-no-files-found: ignore

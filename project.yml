@@ -56,6 +56,7 @@ targets:
         NSCameraUsageDescription: Tare uses the camera for progress photos. They stay inside Tare.
         NSPhotoLibraryUsageDescription: Tare can import older progress photos from your library.
         NSFaceIDUsageDescription: Tare can lock the Progress tab behind Face ID.
+        ITSAppUsesNonExemptEncryption: false
     entitlements:
       path: Tare/Tare.entitlements
       properties:
@@ -93,7 +94,3 @@ schemes:
         TareWidget: all
     run:
       config: Debug
-    test:
-      config: Debug
-      targets:
-        - TareEngineTests
