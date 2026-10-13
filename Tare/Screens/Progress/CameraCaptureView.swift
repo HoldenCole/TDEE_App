@@ -189,6 +189,10 @@ final class CameraController: NSObject, AVCapturePhotoCaptureDelegate {
     private var completion: ((UIImage) -> Void)?
     private let queue = DispatchQueue(label: "tare.camera")
 
+    override init() {
+        super.init()
+    }
+
     func start(front: Bool) {
         queue.async { [self] in
             session.beginConfiguration()

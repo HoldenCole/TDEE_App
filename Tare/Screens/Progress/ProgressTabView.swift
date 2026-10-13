@@ -79,7 +79,7 @@ struct ProgressTabView: View {
             return
         }
         context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Unlock your progress photos and lifts") { ok, _ in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 model.progressUnlocked = ok
                 unlocking = false
             }
@@ -167,6 +167,13 @@ struct LiftsView: View {
                 .padding(.top, 10)
             }
 
+            strengthAndMore
+        }
+    }
+
+    @ViewBuilder
+    private var strengthAndMore: some View {
+        Group {
             Hairline().padding(.vertical, 22)
 
             Eyebrow("Estimated 1RM").padding(.bottom, 10)

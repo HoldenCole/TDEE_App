@@ -412,9 +412,15 @@ struct NumberDetailSheet: View {
                 return Feed(label: ex, value: primary ? "primary" : "secondary, ½", number: .e1rm(ex))
             } + [Feed(label: "Target", value: "\(d.hardSetsTargetPerWeek) sets/wk", dialGroup: .coach)]
         case .e1rm(let ex):
-            let sessions = LiftAnalytics.strength(sets: model.liftSets).first { $0.exercise == ex }?.sessions.suffix(5) ?? []
-            return sessions.reversed().map { Feed(label: Fmt.shortDate($0.date), value: "\(Fmt.int($0.bestSetWeightLb)) × \($0.bestSetReps) → \(Fmt.int($0.e1RM))") }
-                + [Feed(label: "Relative strength", value: s.body.trendWeightLb.flatMap { w in LiftAnalytics.strength(sets: model.liftSets).first { $0.exercise == ex }?.latest.map { Fmt.dec($0 / w, 2) + "× bodyweight" } } ?? "—")]
+            let strength = LiftAnalytics.strength(sets: model.liftSets).first { $0.exercise == ex }
+            let sessions = Array((strength?.sessions ?? []).suffix(5))
+            var relative = "—"
+            if let w = s.body.trendWeightLb, let latest = strength?.latest, w > 0 {
+                relative = Fmt.dec(latest / w, 2) + "× bodyweight"
+            }
+            var rows: [Feed] = sessions.reversed().map { Feed(label: Fmt.shortDate($0.date), value: "\(Fmt.int($0.bestSetWeightLb)) × \($0.bestSetReps) → \(Fmt.int($0.e1RM))") }
+            rows.append(Feed(label: "Relative strength", value: relative))
+            return rows
         case .sensitivity(let key):
             let spec = DialCatalog.spec(for: key, in: d)
             return [

@@ -41,10 +41,11 @@ final class AppModel {
     private(set) var lastError: String?
 
     init(container: ModelContainer) {
+        let loaded = AppState.loadDials()
         self.container = container
-        self.dials = AppState.loadDials()
+        self.dials = loaded
         self.onboarded = AppState.onboarded
-        self.snapshot = Engine.compute(log: [], dials: dials)
+        self.snapshot = Engine.compute(log: [], dials: loaded)
         _ = AppState.firstLaunch
         reloadAll()
     }

@@ -20,7 +20,7 @@ enum HevyConnector {
         if !fullHistory, let last = AppState.hevyLastSync {
             since = Calendar.current.date(byAdding: .day, value: -7, to: last)
         }
-        let known = Set(model.liftSets.map { MuscleMap.normalize($0.exercise) })
+        let known = Set(model.liftSets.map(\.exercise))
         let result = try await client.fetchWorkouts(since: since, pageSize: 10, knownExercises: known)
         let added = model.addLiftSets(result.sets, batchID: "hevy")
 
