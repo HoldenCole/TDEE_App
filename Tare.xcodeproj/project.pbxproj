@@ -24,6 +24,7 @@
 		7D0F839B62D7DD63B4B5B9DB /* CameraCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD758FDE915989086055E38 /* CameraCaptureView.swift */; };
 		7D719EDAD64500CB25F73BE1 /* TareEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAD865E3C17BE3A2550EEDB /* TareEngine */; };
 		7F1E621435690017671EBA0F /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC1EFDDACFEF644351FC54F /* PlanView.swift */; };
+		8407B32D73A32FBE5875AFC5 /* Intents.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED510654607049B31BABAAF /* Intents.swift */; };
 		906C0A59B9204EFFE8612975 /* DialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5683F94301D170151D857C /* DialsView.swift */; };
 		992B312C0E33DF9C0AD4B448 /* HealthSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9957DADD6A7BF82710930C3E /* HealthSync.swift */; };
 		9A249110E3C7734F5A8E7B75 /* ImportMappingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3887F39C11A2E6241FBD0508 /* ImportMappingView.swift */; };
@@ -105,6 +106,7 @@
 		D77F4D8991CE545D8347E7C6 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D9633C81B5F34E50C550B1AA /* TareWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TareWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBB5C54CF6BA0C36ED1F2112 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		DED510654607049B31BABAAF /* Intents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intents.swift; sourceTree = "<group>"; };
 		E1426581F25D0E107DE115F3 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		EF5899AAA49388E99CF5BC47 /* Tare.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1559740E649DC10CE5FE152 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendView.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 			children = (
 				DBB5C54CF6BA0C36ED1F2112 /* AppModel.swift */,
 				D77F4D8991CE545D8347E7C6 /* AppState.swift */,
+				DED510654607049B31BABAAF /* Intents.swift */,
 				41E850178EBC94F6A6664E35 /* NumberID.swift */,
 			);
 			path = App;
@@ -455,6 +458,7 @@
 				992B312C0E33DF9C0AD4B448 /* HealthSync.swift in Sources */,
 				61A94449B27258A159389B18 /* HevyConnector.swift in Sources */,
 				9A249110E3C7734F5A8E7B75 /* ImportMappingView.swift in Sources */,
+				8407B32D73A32FBE5875AFC5 /* Intents.swift in Sources */,
 				2C103A6D8B63E504BCED0FA8 /* Keychain.swift in Sources */,
 				120F5324FE238CDD7FE7C46D /* Models.swift in Sources */,
 				A6B22520E50E916693ACCA76 /* NumberDetailSheet.swift in Sources */,

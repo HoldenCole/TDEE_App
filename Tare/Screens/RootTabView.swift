@@ -50,7 +50,7 @@ struct RootTabView: View {
     private func configureTabBar() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = UIColor(Theme.surface)
         appearance.shadowColor = .clear
         let item = appearance.stackedLayoutAppearance
         item.normal.iconColor = UIColor(Theme.tertiary)

@@ -14,6 +14,12 @@ jobs:
   simulator:
     runs-on: macos-15
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        appearance: [light, dark]
+    env:
+      TEST_RUNNER_TARE_DARK: ${{ matrix.appearance == 'dark' && '1' || '0' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -81,9 +87,9 @@ jobs:
           git config user.name "tare-ci"
           git config user.email "ci@users.noreply.github.com"
           git stash -u -q || true
-          git checkout -q --orphan ci-screenshots
+          git checkout -q --orphan ci-screenshots-${{ matrix.appearance }}
           git rm -rfq . >/dev/null 2>&1 || true
           git stash pop -q || true
           git add -f screenshots
           git commit -qm "Screenshots from ${{ github.ref_name }} @ ${{ github.sha }} (run ${{ github.run_number }})"
-          git push -f origin ci-screenshots
+          git push -f origin ci-screenshots-${{ matrix.appearance }}

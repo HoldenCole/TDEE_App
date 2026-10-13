@@ -326,7 +326,7 @@ struct DialControl: View {
                     } label: {
                         Text(names[day - 1])
                             .font(Theme.bodySmall(.semibold))
-                            .foregroundStyle(on ? .white : Theme.ink)
+                            .foregroundStyle(on ? Theme.onInk : Theme.ink)
                             .frame(width: 38, height: 38)
                             .background(Circle().fill(on ? Theme.ink : Theme.pill))
                     }

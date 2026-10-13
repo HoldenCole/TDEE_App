@@ -111,7 +111,7 @@ struct PillChip: View {
         Button(action: action) {
             Text(title)
                 .font(Theme.body(.semibold))
-                .foregroundStyle(active ? .white : Theme.ink)
+                .foregroundStyle(active ? Theme.onInk : Theme.ink)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(Capsule().fill(active ? Theme.ink : Theme.pill))
@@ -142,7 +142,7 @@ struct PillButton: View {
 struct InkButton: View {
     let title: String
     var fill: Color = Theme.ink
-    var foreground: Color = .white
+    var foreground: Color = Theme.onInk
     var expand: Bool = true
     let action: () -> Void
 
@@ -191,7 +191,7 @@ struct SegmentedPills<T: Hashable>: View {
                         .foregroundStyle(selection == value ? Theme.ink : Theme.secondary)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
-                        .background(Capsule().fill(selection == value ? Color.white : Color.clear).shadow(color: .black.opacity(selection == value ? 0.08 : 0), radius: 3, y: 1))
+                        .background(Capsule().fill(selection == value ? Theme.segmentActive : Color.clear).shadow(color: .black.opacity(selection == value ? 0.08 : 0), radius: 3, y: 1))
                 }
                 .buttonStyle(.plain)
             }
@@ -241,7 +241,7 @@ struct TareSlider: View {
                 Capsule().fill(Theme.track).frame(height: 5)
                 Capsule().fill(tint).frame(width: x + thumbSize / 2, height: 5)
                 Circle()
-                    .fill(Color.white)
+                    .fill(Theme.thumb)
                     .frame(width: thumbSize, height: thumbSize)
                     .shadow(color: .black.opacity(0.18), radius: 4, y: 2)
                     .offset(x: x)
@@ -327,7 +327,7 @@ struct ToastView: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Text(toast.message).font(Theme.bodySmall(.semibold)).foregroundStyle(.white)
+            Text(toast.message).font(Theme.bodySmall(.semibold)).foregroundStyle(Theme.onInk)
             Spacer()
             if let title = toast.actionTitle {
                 Button(title) {

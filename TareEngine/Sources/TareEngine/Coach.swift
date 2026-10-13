@@ -199,6 +199,7 @@ public enum Coach {
     }
 
     static func rateOffTarget(context: CoachContext, snapshot: EngineSnapshot, dials: Dials, today: Date, calendar: Calendar) -> (CoachRecommendation?, Bool)? {
+        guard !snapshot.targets.goalRate.isDietBreak else { return nil }
         guard let actualLb = snapshot.actualRateLbPerWeek, let actualPct = snapshot.actualRatePercentPerWeek, snapshot.observed.daysWithWeight >= dials.minDaysBeforeTrust else { return nil }
         let goal = snapshot.targets.goalRate
         let missPct = actualPct - goal.percentPercentSafe

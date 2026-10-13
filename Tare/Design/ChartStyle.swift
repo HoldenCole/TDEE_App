@@ -35,9 +35,13 @@ struct PhaseSpan: Identifiable, Equatable {
     let end: Date
     /// True when the span begins with a switch inside the chart range (draw the line).
     let startsWithSwitch: Bool
+    var label: String? = nil
     var id: Date { start }
 
+    var title: String { label ?? phase.title }
+
     var color: Color {
+        if label != nil { return Theme.good }
         switch phase {
         case .cut: return Theme.behindBar
         case .leanBulk, .bulk: return Theme.accent
@@ -59,7 +63,7 @@ struct PhaseLayer: ChartContent {
                     .foregroundStyle(span.color)
                     .lineStyle(StrokeStyle(lineWidth: 2))
                     .annotation(position: .bottom, alignment: .leading, spacing: 2) {
-                        Text(span.phase.title).font(.system(size: 11, weight: .semibold)).foregroundStyle(span.color)
+                        Text(span.title).font(.system(size: 11, weight: .semibold)).foregroundStyle(span.color)
                     }
             }
         }
@@ -134,7 +138,7 @@ struct WeightChart: View {
                 if let last = points.last {
                     PointMark(x: .value("Date", last.date), y: .value("Trend", last.trendLb))
                         .symbol {
-                            Circle().strokeBorder(Theme.accent, lineWidth: 2.5).background(Circle().fill(Color.white)).frame(width: 14, height: 14)
+                            Circle().strokeBorder(Theme.accent, lineWidth: 2.5).background(Circle().fill(Theme.surface)).frame(width: 14, height: 14)
                         }
                         .annotation(position: .trailing, spacing: 4) {
                             Text(Fmt.lb(last.trendLb)).font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.tertiary)
@@ -207,7 +211,7 @@ struct LineSeriesChart: View {
             if let last = series.last {
                 PointMark(x: .value("Date", last.date), y: .value("Value", last.value))
                     .symbol {
-                        Circle().strokeBorder(Theme.accent, lineWidth: 2.5).background(Circle().fill(Color.white)).frame(width: 14, height: 14)
+                        Circle().strokeBorder(Theme.accent, lineWidth: 2.5).background(Circle().fill(Theme.surface)).frame(width: 14, height: 14)
                     }
                     .annotation(position: .trailing, spacing: 4) {
                         Text(yDigits == 0 ? Fmt.int(last.value) : Fmt.dec(last.value, yDigits)).font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.tertiary)

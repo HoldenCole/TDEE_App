@@ -278,20 +278,20 @@ struct BodyMapView: View {
                     Button { model.showDetail(.sets(m)) } label: {
                         RoundedRectangle(cornerRadius: 6).fill(color(for: m))
                             .frame(width: rect.width, height: rect.height)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.white, lineWidth: 1.5))
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Theme.surface, lineWidth: 1.5))
                     }
                     .buttonStyle(.plain)
                     .offset(x: rect.minX, y: rect.minY)
                     if front && (m == .biceps || m == .forearms) {
                         RoundedRectangle(cornerRadius: 6).fill(color(for: m))
                             .frame(width: rect.width, height: rect.height)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.white, lineWidth: 1.5))
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Theme.surface, lineWidth: 1.5))
                             .offset(x: 120 - rect.maxX, y: rect.minY)
                     }
                     if !front && m == .triceps {
                         RoundedRectangle(cornerRadius: 6).fill(color(for: m))
                             .frame(width: rect.width, height: rect.height)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.white, lineWidth: 1.5))
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Theme.surface, lineWidth: 1.5))
                             .offset(x: 120 - rect.maxX, y: rect.minY)
                     }
                 }
@@ -347,7 +347,7 @@ struct PhotosView: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            PillButton(title: "Take photo", tint: .white, background: Theme.ink) { showCamera = true }
+            PillButton(title: "Take photo", tint: Theme.onInk, background: Theme.ink) { showCamera = true }
             PillButton(title: "Import") { showImport = true }
             Spacer()
             Menu {

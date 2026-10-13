@@ -120,9 +120,9 @@ struct OnboardingView: View {
                         phase = p
                     } label: {
                         HStack {
-                            Text(p.title).font(Theme.body(.semibold)).foregroundStyle(phase == p ? .white : Theme.ink)
+                            Text(p.title).font(Theme.body(.semibold)).foregroundStyle(phase == p ? Theme.onInk : Theme.ink)
                             Spacer()
-                            Text("\(Fmt.signed(p.defaultRatePercent, 2))% / wk").font(Theme.body()).foregroundStyle(phase == p ? .white.opacity(0.8) : Theme.secondary)
+                            Text("\(Fmt.signed(p.defaultRatePercent, 2))% / wk").font(Theme.body()).foregroundStyle(phase == p ? Theme.onInk.opacity(0.8) : Theme.secondary)
                         }
                         .padding(.horizontal, 18).padding(.vertical, 14)
                         .background(RoundedRectangle(cornerRadius: Theme.buttonRadius, style: .continuous).fill(phase == p ? Theme.ink : Theme.pill))

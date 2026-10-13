@@ -34,9 +34,14 @@ public struct GoalRate: Equatable, Sendable {
     public let percentPerWeek: Double
     /// Daily surplus (positive) or deficit (negative) in kcal.
     public let dailyKcal: Double
+    /// True while a scheduled diet break holds the rate at zero.
+    public let isDietBreak: Bool
+    /// The rate the plan returns to after the break (equals the others when not on a break).
+    public let plannedLbPerWeek: Double
 
     public static func compute(dials: Dials, weightLb: Double, today: Date, calendar: Calendar) -> GoalRate {
         let w = max(weightLb, 1)
+        let onBreak = dials.isInDietBreak(on: today, calendar: calendar)
         var lb: Double
         var daily: Double? = nil
         switch dials.rateMode {
@@ -55,8 +60,11 @@ public struct GoalRate: Equatable, Sendable {
                 lb = 0
             }
         }
-        let dailyKcal = daily ?? lb * dials.kcalPerLb / 7
-        return GoalRate(mode: dials.rateMode, lbPerWeek: lb, percentPerWeek: lb / w * 100, dailyKcal: dailyKcal)
+        let plannedDaily = daily ?? lb * dials.kcalPerLb / 7
+        if onBreak {
+            return GoalRate(mode: dials.rateMode, lbPerWeek: 0, percentPerWeek: 0, dailyKcal: 0, isDietBreak: true, plannedLbPerWeek: lb)
+        }
+        return GoalRate(mode: dials.rateMode, lbPerWeek: lb, percentPerWeek: lb / w * 100, dailyKcal: plannedDaily, isDietBreak: false, plannedLbPerWeek: lb)
     }
 
     /// The dial value that would produce `lbPerWeek` in the active mode, for the coach to apply.

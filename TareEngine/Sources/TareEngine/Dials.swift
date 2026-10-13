@@ -185,6 +185,9 @@ public struct Dials: Codable, Equatable, Sendable {
     public var goalDate: Date? = nil
     public var calorieFloor: Double? = nil
     public var calorieCeiling: Double? = nil
+    /// A scheduled diet break: the rate is held at zero for `dietBreakWeeks` from this date.
+    public var dietBreakStartDate: Date? = nil
+    public var dietBreakWeeks: Int = 1
 
     // MARK: Cycling
     public var cyclingEnabled: Bool = true
@@ -269,6 +272,18 @@ public struct Dials: Codable, Equatable, Sendable {
         return 6.0
     }
 
+    /// The diet break's last day (exclusive), if one is scheduled.
+    public func dietBreakEnd(calendar: Calendar = .current) -> Date? {
+        guard let start = dietBreakStartDate else { return nil }
+        return calendar.date(byAdding: .day, value: max(1, dietBreakWeeks) * 7, to: calendar.startOfDay(for: start))
+    }
+
+    public func isInDietBreak(on date: Date, calendar: Calendar = .current) -> Bool {
+        guard let start = dietBreakStartDate, let end = dietBreakEnd(calendar: calendar) else { return false }
+        let day = calendar.startOfDay(for: date)
+        return day >= calendar.startOfDay(for: start) && day < end
+    }
+
     public func weekdayOffset(forWeekday weekday: Int) -> Double {
         let index = max(0, min(6, weekday - 1))
         return index < weekdayOffsets.count ? weekdayOffsets[index] : 0
@@ -286,6 +301,7 @@ public struct Dials: Codable, Equatable, Sendable {
         case tefMode, tefProteinPercent, tefCarbPercent, tefFatPercent, tefFlatPercent
         case trustWindowDays, minDaysBeforeTrust, maxTrustPercent, kcalPerLb, incompleteFoodDays, metabolicAdaptationPercent
         case rateMode, ratePercentPerWeek, rateLbPerWeek, fixedKcalOffset, goalWeightLb, goalDate, calorieFloor, calorieCeiling
+        case dietBreakStartDate, dietBreakWeeks
         case cyclingEnabled, cyclingShiftPercent, trainingDayDetection, scheduledTrainingWeekdays, weekdayOffsets
         case proteinGramsPerLb, proteinBasis, fatMode, fatGramsPerLb, fatPercentOfCalories, carbFloorGrams, fiberGramsPer1000Kcal
         case dayTypeOverridesEnabled, trainingProteinGramsPerLb, trainingFatGramsPerLb, restProteinGramsPerLb, restFatGramsPerLb
@@ -352,6 +368,8 @@ public struct Dials: Codable, Equatable, Sendable {
         goalDate = c.optional(.goalDate, default: d.goalDate)
         calorieFloor = c.optional(.calorieFloor, default: d.calorieFloor)
         calorieCeiling = c.optional(.calorieCeiling, default: d.calorieCeiling)
+        dietBreakStartDate = c.optional(.dietBreakStartDate, default: d.dietBreakStartDate)
+        dietBreakWeeks = c.value(.dietBreakWeeks, default: d.dietBreakWeeks)
 
         cyclingEnabled = c.value(.cyclingEnabled, default: d.cyclingEnabled)
         cyclingShiftPercent = c.value(.cyclingShiftPercent, default: d.cyclingShiftPercent)

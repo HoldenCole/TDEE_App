@@ -1,21 +1,27 @@
 import SwiftUI
+import UIKit
 
-/// Design tokens from SCREENS.md section 1.
+/// Design tokens from SCREENS.md section 1, with a dark counterpart for each that follows the system setting.
 enum Theme {
-    static let ink = Color(hex: 0x15181D)
-    static let secondary = Color(hex: 0x6B7280)
-    static let tertiary = Color(hex: 0x9AA1AB)
-    static let hairline = Color(hex: 0xECEEF1)
-    static let track = Color(hex: 0xEEF0F3)
-    static let pill = Color(hex: 0xF2F3F5)
-    static let accent = Color(hex: 0x2453CC)
-    static let accentTint = Color(hex: 0x2453CC).opacity(0.08)
+    static let ink = Color(light: 0x15181D, dark: 0xF3F4F6)
+    static let secondary = Color(light: 0x6B7280, dark: 0x9AA1AB)
+    static let tertiary = Color(light: 0x9AA1AB, dark: 0x6B7280)
+    static let hairline = Color(light: 0xECEEF1, dark: 0x262A31)
+    static let track = Color(light: 0xEEF0F3, dark: 0x23272E)
+    static let pill = Color(light: 0xF2F3F5, dark: 0x1C2026)
+    static let accent = Color(light: 0x2453CC, dark: 0x6B97FF)
+    static let accentTint = Color(light: 0x2453CC, dark: 0x6B97FF).opacity(0.12)
     static let coachStart = Color(hex: 0x1B3FA8)
     static let coachEnd = Color(hex: 0x2F63E0)
-    static let good = Color(hex: 0x1D7A50)
-    static let behind = Color(hex: 0x9A5A06)
-    static let behindBar = Color(hex: 0xC27A12)
-    static let surface = Color.white
+    static let good = Color(light: 0x1D7A50, dark: 0x4CC38A)
+    static let behind = Color(light: 0x9A5A06, dark: 0xE2A64F)
+    static let behindBar = Color(light: 0xC27A12, dark: 0xD08A2A)
+    static let surface = Color(light: 0xFFFFFF, dark: 0x0F1115)
+    /// Text on an ink-filled control: white in light mode, near-black in dark.
+    static let onInk = Color(light: 0xFFFFFF, dark: 0x0F1115)
+    /// The active segment of a segmented control, and slider thumbs.
+    static let segmentActive = Color(light: 0xFFFFFF, dark: 0x2B3038)
+    static let thumb = Color(light: 0xFFFFFF, dark: 0xE5E7EB)
 
     static let coachGradient = LinearGradient(colors: [coachStart, coachEnd], startPoint: .topLeading, endPoint: .bottomTrailing)
 
@@ -45,6 +51,19 @@ extension Color {
             green: Double((hex >> 8) & 0xFF) / 255,
             blue: Double(hex & 0xFF) / 255
         )
+    }
+
+    /// A color that resolves per appearance.
+    init(light: UInt32, dark: UInt32) {
+        self.init(uiColor: UIColor { traits in
+            let hex = traits.userInterfaceStyle == .dark ? dark : light
+            return UIColor(
+                red: CGFloat((hex >> 16) & 0xFF) / 255,
+                green: CGFloat((hex >> 8) & 0xFF) / 255,
+                blue: CGFloat(hex & 0xFF) / 255,
+                alpha: 1
+            )
+        })
     }
 }
 

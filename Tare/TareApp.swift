@@ -13,6 +13,14 @@ struct TareApp: App {
         _model = State(initialValue: AppModel(container: container))
     }
 
+    /// `-TareForceDark` / `-TareForceLight` pin the appearance for screenshots; otherwise follow the system.
+    private var forcedScheme: ColorScheme? {
+        let args = CommandLine.arguments
+        if args.contains("-TareForceDark") { return .dark }
+        if args.contains("-TareForceLight") { return .light }
+        return nil
+    }
+
     var body: some Scene {
         WindowGroup {
             Group {
@@ -24,7 +32,7 @@ struct TareApp: App {
             }
             .environment(model)
             .modelContainer(container)
-            .preferredColorScheme(.light)
+            .preferredColorScheme(forcedScheme)
             .tint(Theme.accent)
             .task {
                 model.startHealthBackgroundDelivery()

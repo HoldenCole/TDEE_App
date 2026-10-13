@@ -172,7 +172,7 @@ struct CoachChartView: View {
                     if series.style == .line, let last = series.points.last, index == 0 {
                         PointMark(x: .value("Date", last.date), y: .value(series.name, last.value))
                             .symbol {
-                                Circle().strokeBorder(Theme.accent, lineWidth: 2.5).background(Circle().fill(Color.white)).frame(width: 14, height: 14)
+                                Circle().strokeBorder(Theme.accent, lineWidth: 2.5).background(Circle().fill(Theme.surface)).frame(width: 14, height: 14)
                             }
                     }
                 }

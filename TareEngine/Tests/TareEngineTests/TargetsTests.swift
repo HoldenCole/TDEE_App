@@ -29,6 +29,26 @@ final class TargetsTests: XCTestCase {
         XCTAssertEqual(r.lbPerWeek, -1, accuracy: 1e-9)
     }
 
+    func testDietBreakHoldsRateAtZeroInsideWindowOnly() {
+        var d = Fixture.dials()
+        d.ratePercentPerWeek = -0.5
+        d.dietBreakStartDate = Fixture.day(3)
+        d.dietBreakWeeks = 1
+        let during = GoalRate.compute(dials: d, weightLb: 184, today: Fixture.today, calendar: Fixture.calendar)
+        XCTAssertTrue(during.isDietBreak)
+        XCTAssertEqual(during.dailyKcal, 0)
+        XCTAssertEqual(during.plannedLbPerWeek, -0.92, accuracy: 1e-9)
+        let after = GoalRate.compute(dials: d, weightLb: 184, today: Fixture.calendar.date(byAdding: .day, value: 5, to: Fixture.today)!, calendar: Fixture.calendar)
+        XCTAssertFalse(after.isDietBreak)
+        XCTAssertEqual(after.lbPerWeek, -0.92, accuracy: 1e-9)
+        let before = GoalRate.compute(dials: d, weightLb: 184, today: Fixture.day(4), calendar: Fixture.calendar)
+        XCTAssertFalse(before.isDietBreak)
+        XCTAssertTrue(d.isInDietBreak(on: Fixture.day(3), calendar: Fixture.calendar))
+        XCTAssertFalse(d.isInDietBreak(on: Fixture.calendar.date(byAdding: .day, value: 4, to: Fixture.today)!, calendar: Fixture.calendar))
+        let s = Engine.compute(log: Fixture.steadyLog(days: 28, calories: 2400, startWeight: 184, lbPerDay: -0.1), dials: d, today: Fixture.today, calendar: Fixture.calendar)
+        XCTAssertEqual(s.targets.baseTarget, Units.round(s.targets.maintenance, toNearest: 10), accuracy: 10.01)
+    }
+
     func testDialValueForLbPerWeekInversesRate() {
         var d = Fixture.dials()
         let (key, value) = GoalRate.dialValue(forLbPerWeek: 0.92, dials: d, weightLb: 184)!

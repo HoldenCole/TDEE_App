@@ -63,8 +63,9 @@ final class DialsTests: XCTestCase {
         XCTAssertNil(d.outlierThresholdLb, "explicit null means the filter is off")
     }
 
-    func testCatalogHas35CoreRows() {
-        XCTAssertEqual(DialCatalog.coreRowCount(for: Dials()), 35)
+    func testCatalogHas36CoreRows() {
+        // The 35 rows of the spec table plus the diet-break row added later.
+        XCTAssertEqual(DialCatalog.coreRowCount(for: Dials()), 36)
     }
 
     func testEverySpecRoundTripsThroughGetAndSet() {

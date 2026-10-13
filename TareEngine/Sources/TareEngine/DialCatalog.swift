@@ -73,6 +73,8 @@ public struct DialKey: RawRepresentable, Hashable, Codable, Sendable, CustomStri
     public static let goalDate = DialKey("goal.goalDate")
     public static let calorieFloor = DialKey("goal.calorieFloor")
     public static let calorieCeiling = DialKey("goal.calorieCeiling")
+    public static let dietBreakStartDate = DialKey("goal.dietBreakStartDate")
+    public static let dietBreakWeeks = DialKey("goal.dietBreakWeeks")
 
     // Cycling
     public static let cyclingEnabled = DialKey("cycling.enabled")
@@ -352,6 +354,8 @@ public enum DialCatalog {
             DialSpec(key: .goalDate, group: .goal, row: "goal.rate", title: "Goal date", note: "Used in Goal weight by date mode.", kind: .date(allowsNone: true), defaultValue: .date(nil)),
             DialSpec(key: .calorieFloor, group: .goal, row: "goal.floorCeiling", title: "Calorie floor", unit: "kcal", note: "The target never goes below this.", kind: .number(min: 800, max: 6000, allowsOff: true), defaultValue: .optionalNumber(nil)),
             DialSpec(key: .calorieCeiling, group: .goal, row: "goal.floorCeiling", title: "Calorie ceiling", unit: "kcal", note: "The target never goes above this.", kind: .number(min: 800, max: 8000, allowsOff: true), defaultValue: .optionalNumber(nil)),
+            DialSpec(key: .dietBreakStartDate, group: .goal, row: "goal.dietBreak", title: "Diet break starts", note: "Holds the rate at zero for the break, then returns to your plan. The chart marks it.", kind: .date(allowsNone: true), defaultValue: .date(nil)),
+            DialSpec(key: .dietBreakWeeks, group: .goal, row: "goal.dietBreak", title: "Diet break length", unit: "weeks", note: "One to two weeks at maintenance is usual during a long cut.", kind: .slider(min: 1, max: 4, step: 1), defaultValue: .number(1)),
         ]
 
         // Cycling
@@ -503,6 +507,8 @@ public extension Dials {
         case .goalDate: return .date(goalDate)
         case .calorieFloor: return .optionalNumber(calorieFloor)
         case .calorieCeiling: return .optionalNumber(calorieCeiling)
+        case .dietBreakStartDate: return .date(dietBreakStartDate)
+        case .dietBreakWeeks: return .number(Double(dietBreakWeeks))
 
         case .cyclingEnabled: return .bool(cyclingEnabled)
         case .cyclingShiftPercent: return .number(cyclingShiftPercent)
@@ -633,6 +639,8 @@ public extension Dials {
         case .goalDate: if let v = date() { goalDate = v }
         case .calorieFloor: if let v = optNum() { calorieFloor = v }
         case .calorieCeiling: if let v = optNum() { calorieCeiling = v }
+        case .dietBreakStartDate: if let v = date() { dietBreakStartDate = v }
+        case .dietBreakWeeks: if let v = int() { dietBreakWeeks = v }
 
         case .cyclingEnabled: if let v = value.boolValue { cyclingEnabled = v }
         case .cyclingShiftPercent: if let v = num() { cyclingShiftPercent = v }

@@ -33,7 +33,7 @@ struct TareWidgetView: View {
     var body: some View {
         content
             .containerBackground(for: .widget) {
-                family == .systemSmall ? Color.white : Color.clear
+                family == .systemSmall ? Color(uiColor: .systemBackground) : Color.clear
             }
     }
 
@@ -58,18 +58,18 @@ struct TareWidgetView: View {
             Text("\(remaining) kcal left")
         default:
             VStack(alignment: .leading, spacing: 4) {
-                Text("REMAINING").font(.system(size: 10, weight: .semibold)).tracking(1).foregroundStyle(Color(red: 0.42, green: 0.45, blue: 0.5))
-                Text(remaining).font(.system(size: 40, weight: .bold)).monospacedDigit().tracking(-1.5).foregroundStyle(Color(red: 0.08, green: 0.09, blue: 0.11)).minimumScaleFactor(0.6)
-                Text("of \(format(s.targetCalories)) kcal").font(.system(size: 13)).foregroundStyle(Color(red: 0.42, green: 0.45, blue: 0.5))
+                Text("REMAINING").font(.system(size: 10, weight: .semibold)).tracking(1).foregroundStyle(Color.secondary)
+                Text(remaining).font(.system(size: 40, weight: .bold)).monospacedDigit().tracking(-1.5).foregroundStyle(Color.primary).minimumScaleFactor(0.6)
+                Text("of \(format(s.targetCalories)) kcal").font(.system(size: 13)).foregroundStyle(Color.secondary)
                 Spacer(minLength: 4)
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        Capsule().fill(Color(red: 0.93, green: 0.94, blue: 0.95))
-                        Capsule().fill(Color(red: 0.08, green: 0.09, blue: 0.11)).frame(width: geo.size.width * s.progress)
+                        Capsule().fill(Color.secondary.opacity(0.2))
+                        Capsule().fill(Color.primary).frame(width: geo.size.width * s.progress)
                     }
                 }
                 .frame(height: 5)
-                Text(s.isTrainingDay ? "Training day" : "Rest day").font(.system(size: 11, weight: .semibold)).foregroundStyle(s.isTrainingDay ? Color(red: 0.14, green: 0.33, blue: 0.8) : Color(red: 0.42, green: 0.45, blue: 0.5))
+                Text(s.isTrainingDay ? "Training day" : "Rest day").font(.system(size: 11, weight: .semibold)).foregroundStyle(s.isTrainingDay ? Color.accentColor : Color.secondary)
             }
         }
     }

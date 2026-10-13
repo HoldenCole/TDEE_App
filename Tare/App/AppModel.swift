@@ -253,7 +253,58 @@ final class AppModel {
             spanStart = c.date
         }
         spans.append(PhaseSpan(phase: current, start: spanStart, end: end, startsWithSwitch: spanStart != start))
-        return spans
+        return spliceDietBreak(into: spans, from: start, to: end)
+    }
+
+    /// Cuts a scheduled diet break out of whichever phase span it falls in and labels it.
+    private func spliceDietBreak(into spans: [PhaseSpan], from start: Date, to end: Date) -> [PhaseSpan] {
+        guard let bStart = dials.dietBreakStartDate.map({ Calendar.current.startOfDay(for: $0) }), let bEnd = dials.dietBreakEnd() else { return spans }
+        let clippedStart = max(bStart, start)
+        let clippedEnd = min(bEnd, end)
+        guard clippedStart < clippedEnd else { return spans }
+        var out: [PhaseSpan] = []
+        for span in spans {
+            if span.end <= clippedStart || span.start >= clippedEnd {
+                out.append(span)
+                continue
+            }
+            if span.start < clippedStart {
+                out.append(PhaseSpan(phase: span.phase, start: span.start, end: clippedStart, startsWithSwitch: span.startsWithSwitch))
+            }
+            out.append(PhaseSpan(phase: .maintain, start: max(span.start, clippedStart), end: min(span.end, clippedEnd), startsWithSwitch: max(span.start, clippedStart) != start, label: "Diet break"))
+            if span.end > clippedEnd {
+                out.append(PhaseSpan(phase: span.phase, start: clippedEnd, end: span.end, startsWithSwitch: true))
+            }
+        }
+        return out
+    }
+
+    // MARK: Diet break and refeed
+
+    func startDietBreak(weeks: Int, from date: Date = Date()) {
+        setDial(.dietBreakWeeks, .number(Double(weeks)), log: false)
+        setDial(.dietBreakStartDate, .date(Calendar.current.startOfDay(for: date)))
+        showToast("Diet break: \(weeks) week\(weeks == 1 ? "" : "s") at maintenance")
+    }
+
+    func endDietBreak() {
+        setDial(.dietBreakStartDate, .date(nil))
+    }
+
+    var dietBreakStatus: String {
+        guard let start = dials.dietBreakStartDate, let end = dials.dietBreakEnd() else { return "None scheduled" }
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        if today < cal.startOfDay(for: start) { return "Starts \(Fmt.shortDate(start)), \(dials.dietBreakWeeks) wk" }
+        if today >= end { return "Ended \(Fmt.shortDate(end))" }
+        let week = cal.days(from: start, to: today) / 7 + 1
+        return "Week \(week) of \(dials.dietBreakWeeks) · ends \(Fmt.shortDate(end))"
+    }
+
+    var refeedSummary: String {
+        let names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        let parts = dials.weekdayOffsets.enumerated().filter { $0.element != 0 }.map { "\(names[$0.offset]) \(Fmt.signed($0.element, 0))" }
+        return parts.isEmpty ? "None" : parts.joined(separator: ", ")
     }
 
     // MARK: Day records

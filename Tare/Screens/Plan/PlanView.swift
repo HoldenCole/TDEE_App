@@ -6,6 +6,8 @@ struct PlanView: View {
     @State private var showSavePreset = false
     @State private var presetName = ""
     @State private var dragStart: DialValue?
+    @State private var showDietBreak = false
+    @State private var dietBreakWeeks = 1
 
     private var s: EngineSnapshot { model.snapshot }
     private var d: Dials { model.dials }
@@ -164,6 +166,30 @@ struct PlanView: View {
                 valueText(d.fatMode == .gramsPerLb ? "\(Fmt.dec(d.fatGramsPerLb, 2)) g/lb" : "\(Fmt.int(d.fatPercentOfCalories))% kcal", bold: "\(Fmt.int(s.targets.weeklyAverage.fatG)) g")
             }
             .onTapGesture { model.tuneDials(group: .macros) }
+            Hairline()
+            SettingRow(title: "Diet break", subtitle: s.targets.goalRate.isDietBreak ? "Rate held at 0 until it ends" : nil) {
+                Text(model.dietBreakStatus).font(.system(size: 17, weight: .semibold)).foregroundStyle(s.targets.goalRate.isDietBreak ? Theme.good : Theme.secondary)
+            }
+            .onTapGesture {
+                dietBreakWeeks = max(1, d.dietBreakWeeks)
+                showDietBreak = true
+            }
+            Hairline()
+            SettingRow(title: "Refeed days", subtitle: "Extra calories on a weekday") {
+                Text(model.refeedSummary).font(.system(size: 17, weight: .semibold)).foregroundStyle(Theme.secondary)
+            }
+            .onTapGesture { model.tuneDials(group: .cycling) }
+        }
+        .confirmationDialog("Diet break", isPresented: $showDietBreak, titleVisibility: .visible) {
+            ForEach([1, 2, 3], id: \.self) { w in
+                Button("Start \(w) week\(w == 1 ? "" : "s") at maintenance today") { model.startDietBreak(weeks: w) }
+            }
+            if d.dietBreakStartDate != nil {
+                Button("Clear the diet break", role: .destructive) { model.endDietBreak() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("The rate goes to zero for the break and comes back on its own. The Trend chart marks it.")
         }
     }
 
