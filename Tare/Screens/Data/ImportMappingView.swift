@@ -24,7 +24,7 @@ struct ImportMappingView: View {
     @State private var importing = false
 
     private var sheet: Sheet { candidate.workbook.sheets[min(sheetIndex, candidate.workbook.sheets.count - 1)] }
-    private var table: Table { sheet.table }
+    private var table: TareFiles.Table { sheet.table }
 
     var body: some View {
         NavigationStack {
